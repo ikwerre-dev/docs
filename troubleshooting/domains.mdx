@@ -1,7 +1,7 @@
 ---
-title: "Fix Domain Issues: 404, 503, DNS, and SSL on Pxxl"
+title: "Fix Domain 404, 503, DNS Records and SSL Issues on Pxxl"
 sidebarTitle: "Domain Issues"
-description: "Resolve domain 404 and 503 errors, fix DNS record problems, renew SSL certificates, and connect domains to projects on Pxxl."
+description: "Resolve domain 404 and 503 errors, fix DNS record problems, renew SSL certificates, and connect custom domains to projects on Pxxl."
 ---
 
 Domains on Pxxl go through three layers before traffic reaches your app: DNS resolution, edge proxy routing, and SSL certificate coverage. A problem at any one layer produces a different symptom — a 404 means the proxy has no route for the hostname, a 503 means the route exists but the upstream is unhealthy, and a certificate warning means the proxy has not yet issued or refreshed the cert. Use the accordions below to find the symptom that matches your situation and follow the fix steps.

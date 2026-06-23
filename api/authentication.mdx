@@ -1,7 +1,7 @@
 ---
-title: "Authenticate Pxxl API Requests with Bearer Tokens"
+title: "Pxxl API Authentication: Bearer Tokens and API Key Setup"
 sidebarTitle: "Authentication"
-description: "Pass your Pxxl API key as a Bearer token in the Authorization header to authenticate every platform API request."
+description: "Pass your Pxxl API key as a Bearer token in the Authorization header to authenticate every platform API request made from your backend."
 ---
 
 Every request to the Pxxl platform API must include a valid API key. You pass the key as a Bearer token in the `Authorization` header, and Pxxl validates the key's scopes before processing the request. Because the key grants real access to your workspace, you must keep it exclusively on your backend — never ship it inside browser bundles, client-side code, or mobile applications.
@@ -21,7 +21,7 @@ Copy the key immediately after creation; it is shown only once.
 
 Include the key on every request using the `Authorization` header:
 
-```
+```http
 Authorization: Bearer YOUR_PLATFORM_API_KEY
 ```
 

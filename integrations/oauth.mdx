@@ -1,7 +1,7 @@
 ---
-title: "Build OAuth Integrations on Top of Pxxl Accounts"
+title: "Build OAuth Integrations on Top of Pxxl User Accounts"
 sidebarTitle: "OAuth"
-description: "Create OAuth apps to let users authorize your product with their Pxxl account. Covers app setup, scopes, authorization flow, token exchange, and webhook verification."
+description: "Build OAuth integrations on Pxxl: create apps, configure scopes, run the authorization code flow, exchange tokens, and verify signed webhook events."
 ---
 
 OAuth integrations let your product ask a signed-in Pxxl user to share permissioned account data through a consent screen — without requiring them to hand over a password or a personal API key. Use this guide when you want a CLI tool, customer portal, partner app, internal workflow, or marketplace flow to connect to a Pxxl account on behalf of a user.
@@ -213,7 +213,7 @@ Verify every incoming webhook before trusting its contents:
 
 Here is a ready-to-use Node.js implementation:
 
-```js
+```javascript
 const crypto = require('crypto');
 
 /**

@@ -1,5 +1,5 @@
 ---
-title: "CDN Storage Spaces and Edge Proxy Monitoring"
+title: "CDN Storage Spaces, Asset Uploads, and Edge Proxy Monitoring"
 sidebarTitle: "CDN & Proxy"
 description: "Create CDN storage spaces, upload assets via API, and analyze real-time edge proxy traffic, security events, and DDoS mitigation on Pxxl."
 ---
@@ -33,6 +33,13 @@ curl -X POST https://gateway.pxxl.dev/api/v3/cdn/assets \
   -F "visibility=public"
 ```
 
+To list the assets already stored in your spaces, use the GET variant of the same endpoint:
+
+```bash
+curl -H "Authorization: Bearer $PXXL_API_KEY" \
+  https://gateway.pxxl.dev/api/v3/cdn/assets
+```
+
 ### Checking Usage Summaries
 
 Track storage limits and monthly network egress consumption with the summary endpoint:
@@ -53,7 +60,12 @@ The response includes the following fields:
 
 ## Proxy Protection Logs
 
-Navigate to your project overview in the Pxxl dashboard and select **Proxy Logs** to see real-time HTTP traffic routed through the Rust reverse proxy. These logs give you a live view of what is reaching your container and what is being stopped at the edge.
+Navigate to your project overview in the Pxxl dashboard and select **Proxy Logs** to see real-time HTTP traffic routed through the Rust reverse proxy. These logs give you a live view of what is reaching your container and what is being stopped at the edge. You can also retrieve log data programmatically using the proxy logs endpoint:
+
+```bash
+curl -H "Authorization: Bearer $PXXL_API_KEY" \
+  https://gateway.pxxl.dev/api/v3/cdn/proxy-logs
+```
 
 The following metrics are available in the Proxy Logs panel:
 

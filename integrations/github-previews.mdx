@@ -1,7 +1,7 @@
 ---
 title: "Automated GitHub Deployments and PR Preview Environments"
 sidebarTitle: "GitHub Previews"
-description: "Set up automatic deployments on push and ephemeral pull request preview environments with Pxxl's GitHub integration."
+description: "Set up automatic deployments on every commit push and create ephemeral pull request preview environments with Pxxl's GitHub integration."
 ---
 
 Pxxl integrates directly with your GitHub repository to automate deployments on every commit push and spin up isolated, live preview environments for every pull request. Once connected, your team can verify changes in a real runtime environment before any code reaches your production branch — no manual deploys required.
@@ -42,7 +42,7 @@ Pxxl listens for the following pull request hook activities:
 
 Preview environments are intentionally short-lived to conserve resources. Every preview follows this lifecycle:
 
-```
+```text
 PR Created ──► Preview Environment Deployed ──► Live URL Mapped
                                                     │
                  ┌──────────────────────────────────┴──────────────────┐
@@ -58,7 +58,7 @@ There are two paths to environment termination:
 - **Manual closure:** When you merge or close the pull request on GitHub, the Pxxl webhook agent receives the `closed` event and terminates the environment immediately.
 - **Automatic expiry:** If a pull request stays open for **72 hours**, a background cleanup worker stops the environment and marks its preview state as expired. You can re-open the PR to trigger a fresh preview build.
 
-## Preview Metadata API
+## Preview Metadata Payload
 
 You can query the active deployment metadata for any preview environment using the platform API. The response gives you the full context of the running preview, including its source branch, commit SHA, and expiry timestamp.
 
@@ -100,6 +100,3 @@ Follow these steps to enable pull request previews for a project in your dashboa
   </Step>
 </Steps>
 
-<Tip>
-  To test the preview pipeline without affecting your team's review queue, open a **draft pull request**. Pxxl still provisions a full preview environment for draft PRs, so you can validate the build and URL mapping before marking the PR as ready for review.
-</Tip>
