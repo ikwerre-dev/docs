@@ -1,20 +1,41 @@
 ---
-title: "Introduction"
-description: "Welcome to your project"
+title: "Pxxl: Deploy Faster, Ship Smarter"
+sidebarTitle: "Home"
+description: "Pxxl is a cloud deployment platform for developers. Ship sites, APIs, and databases from GitHub to a live URL in seconds."
 ---
 
-Write a short description of your product here. What it does, who it's for, and what they can accomplish with it.
+Pxxl is an Africa-first cloud deployment platform that takes your GitHub repository and turns it into a live, production-ready URL — no server configuration required. Whether you are shipping a React app, a FastAPI backend, a PostgreSQL database, or a custom domain, Pxxl handles the infrastructure so you can stay focused on writing code.
 
-<Tip>
-  Ready to make this your own? Start by editing this page. Update your `docs.json` file to customize your site. Then fill out the [Quickstart](/quickstart) page.
-</Tip>
+<CardGroup cols={2}>
+  <Card title="Introduction" icon="map" href="/introduction">
+    Learn what Pxxl is, who it is for, and how the platform works from end to end.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Deploy your first project in under five minutes by connecting GitHub and clicking Deploy.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/overview">
+    Explore the Pxxl REST API to automate deployments, manage projects, and query logs programmatically.
+  </Card>
+  <Card title="Dashboard" icon="gauge" href="/dashboard">
+    Navigate the Pxxl dashboard — Projects, Deployments, Domains, CDN, Databases, Cron Jobs, and more.
+  </Card>
+</CardGroup>
 
-<Card title="Quickstart" icon="rocket" href="/quickstart">
-  This card links to the quickstart page in your project.
-</Card>
-<Card title="Components" icon="puzzle-piece" href="https://mintlify.com/docs/components">
-  Add cards, callouts, steps, tabs, and more to design and structure your pages.
-</Card>
-<Card title="Settings" icon="gear" href="https://mintlify.com/docs/organize/settings">
-  Set your site name, branding, and navigation in the `docs.json` file.
-</Card>
+## How Deployment Works
+
+From a GitHub push to a live URL, Pxxl walks your code through four straightforward stages.
+
+<Steps>
+  <Step title="Connect Your Repository">
+    Link your GitHub account and select the repository you want to deploy.
+  </Step>
+  <Step title="Configure Your Build">
+    Set your install, build, and start commands — or let Pxxl auto-detect them from your stack.
+  </Step>
+  <Step title="Deploy">
+    Click **Deploy Project**. Pxxl pulls your code, runs the build pipeline, and starts your service in a container.
+  </Step>
+  <Step title="Go Live">
+    Your project is immediately available at a `yourproject.pxxl.pro` subdomain. Point a custom domain whenever you are ready.
+  </Step>
+</Steps>

@@ -1,0 +1,69 @@
+---
+title: "Pxxl Platform API Overview and Common Areas"
+sidebarTitle: "Overview"
+description: "Explore the Pxxl API for automating deployments, managing CDN assets, reading usage data, and building OAuth integrations from your backend."
+---
+
+Pxxl exposes a platform API for backend automation, deployment checks, CDN storage workflows, and integrations that must never run directly inside browser code. Use the API to build internal tooling, connect external monitors, upload CDN assets from a server process, and power OAuth-based third-party integrations — all from a backend environment where your API keys stay safe.
+
+## Postman Collection
+
+To quickly explore all available endpoints, download the curated Pxxl Platform Postman collection:
+
+[Download Pxxl Platform Postman Collection](https://pxxl.app/postman/pxxl-platform.postman_collection.json)
+
+After importing the collection, set two environment variables before sending any requests:
+
+- `base_url` — for example, `https://gateway.pxxl.dev/api/v3`
+- `bearer_token` — your platform API key from **Dashboard > API Keys**
+
+## Base URL
+
+Every API request targets the following base URL:
+
+```
+https://gateway.pxxl.dev/api/v3
+```
+
+All paths in this documentation are relative to this base.
+
+## Common API Areas
+
+Use the API for server-side automation only. Keep API keys in backend secrets and expose only your own controlled endpoints to browsers or mobile clients.
+
+| Area | Typical Use |
+| --- | --- |
+| **Deployments** | Read deployment status, track build results, and connect external monitors. |
+| **Projects** | Query project metadata and support internal operations tooling. |
+| **CDN** | Upload, list, and audit CDN assets from a backend service. |
+| **Usage** | Review workspace usage for reporting or alerts. |
+| **OAuth integrations** | Build permissioned integrations that users explicitly authorize. |
+| **Webhooks** | Receive signed event notifications when dashboard activity changes. |
+
+## API Integration Checklist
+
+<Note>
+Before shipping any custom API integration, confirm that your backend handles each of these cases:
+
+- **API Key Scopes:** Ensure your key is limited to the exact scopes your integration requires.
+- **Rate Limiting:** Guard loops to handle HTTP `429 Too Many Requests` responses gracefully using exponential backoff.
+- **Input Validation:** Validate all request payloads before forwarding them to Pxxl.
+- **Token Expiration:** If you use OAuth tokens, implement active validation loops to request fresh tokens before executing user actions.
+</Note>
+
+## Explore the API
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api/authentication">
+    Learn how to create API keys and attach them to every platform request using the `Authorization` header.
+  </Card>
+  <Card title="CDN API" icon="cloud-arrow-up" href="/api/cdn">
+    Upload files to public or private storage spaces, list assets, and retrieve bandwidth usage and proxy logs.
+  </Card>
+  <Card title="Deployments API" icon="rocket" href="/api/deployments">
+    Query deployment status and project metadata from your backend service or monitoring workflow.
+  </Card>
+  <Card title="OAuth Integration" icon="link" href="/integrations/oauth">
+    Build permissioned integrations that request user consent, exchange authorization codes, and read Pxxl user data.
+  </Card>
+</CardGroup>

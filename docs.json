@@ -1,72 +1,90 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
+  "name": "Pxxl",
+  "theme": "luma",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "https://media.brand.dev/b477ef75-f22a-41f0-a85b-c85119e091f9.png",
+    "dark": "https://media.brand.dev/b477ef75-f22a-41f0-a85b-c85119e091f9.png"
+  },
+  "favicon": "https://media.brand.dev/77aa8868-c2fb-4583-b67b-5c01bdfcd7fe.png",
+  "colors": {
+    "primary": "#de59db",
+    "light": "#de59db",
+    "dark": "#381838"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "label": "Deploy Now",
+      "href": "https://pxxl.app/signup"
     }
   },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "deployment-reference",
+              "framework-recipes"
+            ]
+          },
+          {
+            "group": "Dashboard",
+            "pages": [
+              "dashboard/overview",
+              "dashboard/projects",
+              "dashboard/deploy-project",
+              "dashboard/import-projects",
+              "dashboard/domains",
+              "dashboard/database",
+              "dashboard/api-keys",
+              "dashboard/settings-usage-webhooks"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/github-previews",
+              "integrations/oauth",
+              "integrations/cdn-proxy"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/domains",
+              "troubleshooting/deployments",
+              "troubleshooting/databases",
+              "troubleshooting/proxy-security",
+              "troubleshooting/oauth"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API",
+            "pages": [
+              "api/overview",
+              "api/authentication",
+              "api/cdn",
+              "api/deployments"
+            ]
+          }
+        ]
+      }
     ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "website": "https://pxxl.app"
     }
   }
 }

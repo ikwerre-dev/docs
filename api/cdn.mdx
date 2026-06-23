@@ -1,0 +1,69 @@
+---
+title: "CDN API: Upload Assets and Query Storage Usage"
+sidebarTitle: "CDN API"
+description: "Use the Pxxl CDN API to upload files to public or private storage spaces, list assets, check bandwidth usage, and retrieve proxy traffic logs."
+---
+
+The Pxxl CDN API gives your backend direct access to object storage, asset management, and edge analytics. Use it to upload build artifacts, serve static files from edge cache nodes, track monthly bandwidth consumption, and pull proxy traffic logs for security analysis — all without leaving your deployment workflow.
+
+## Endpoints
+
+| HTTP Method | API Path | Objective |
+| --- | --- | --- |
+| **GET** | `/api/v3/cdn/summary` | Query total bandwidth and remaining wallet credits. |
+| **GET** | `/api/v3/cdn/assets` | Paginate through your uploaded asset catalog. |
+| **POST** | `/api/v3/cdn/assets` | Upload a new asset to public or private spaces. |
+| **GET** | `/api/v3/cdn/proxy-logs` | Retrieve traffic anomaly logs and edge events. |
+
+## Upload an Asset
+
+Send a `multipart/form-data` POST request to upload a file to your storage space. Set `visibility` to `public` for files served from edge cache nodes, or `private` for files accessed via pre-signed URLs.
+
+```bash
+curl -X POST https://gateway.pxxl.dev/api/v3/cdn/assets \
+  -H "Authorization: Bearer $PXXL_API_KEY" \
+  -F "file=@./static/logo.png" \
+  -F "visibility=public"
+```
+
+## Check Usage Summary
+
+Query your current storage and bandwidth consumption, along with remaining wallet credits:
+
+```bash
+curl -H "Authorization: Bearer $PXXL_API_KEY" \
+  https://gateway.pxxl.dev/api/v3/cdn/summary
+```
+
+The response returns the following fields:
+
+<ResponseField name="activeSpaceCount" type="integer">
+  Total number of CDN spaces you have created in your workspace.
+</ResponseField>
+
+<ResponseField name="bandwidthBytesOut" type="integer">
+  Egress bytes served from cache nodes to end users during the current billing period.
+</ResponseField>
+
+<ResponseField name="totalObjectsStored" type="integer">
+  Total count of files currently stored across all your CDN spaces.
+</ResponseField>
+
+<ResponseField name="remainingCredits" type="number">
+  Wallet currency available for CDN plan upgrades or additional storage capacity.
+</ResponseField>
+
+## Get Proxy Logs
+
+Retrieve edge traffic logs and security anomaly events recorded by the Pxxl reverse proxy:
+
+```bash
+curl -H "Authorization: Bearer $PXXL_API_KEY" \
+  https://gateway.pxxl.dev/api/v3/cdn/proxy-logs
+```
+
+Proxy logs include allowed and blocked request counts, risk index ratings, GeoIP concentration breakdowns, and the top IP sources contributing the highest traffic volumes to your project domains.
+
+<Tip>
+If you accidentally expose a CDN upload API key in a client bundle, a public repository, or a build log, rotate it immediately from **Dashboard > API Keys**. Delete the compromised key, create a replacement with the same CDN upload and read scopes, and update the secret in your backend environment before redeploying.
+</Tip>
