@@ -1,13 +1,13 @@
 ---
 title: "Pxxl CLI"
 sidebarTitle: "Pxxl CLI"
-description: "Install and use the pxxl npm package for login, SpaceDrop deploys, CDN commands, and domain reseller lookups."
+description: "Install and use the @pxxlapp/pxxl npm package for login, SpaceDrop deploys, CDN commands, database management, teams, and domain reseller lookups."
 ---
 
 Install the CLI from npm:
 
 ```bash
-npm install -g pxxl
+npm install -g @pxxlapp/pxxl
 ```
 
 Log in with a Pxxl API key:
@@ -16,7 +16,7 @@ Log in with a Pxxl API key:
 pxxl login --api-key pxxl_...
 ```
 
-The CLI stores credentials in your user config directory with restricted file permissions. `PXXL_API_KEY` always overrides the stored key.
+The CLI stores credentials in your user config directory with restricted file permissions. `PXXL_API_KEY` always overrides the stored key. `PXXL_TEAM_ID` overrides the selected spaceship for scoped commands.
 
 ## Commands
 
@@ -29,6 +29,8 @@ The CLI stores credentials in your user config directory with restricted file pe
 | `pxxl deploy` | Zip the current project and deploy it through SpaceDrop. |
 | `pxxl cdn ...` | Upload, list, download, delete, and summarize CDN assets. |
 | `pxxl domain ...` | Search domains, TLD pricing, and promo data. |
+| `pxxl team ...` | List spaceships and select one for scoped operations. |
+| `pxxl db ...` | Create, list, inspect, and manage Pxxl databases. |
 
 ## Boilerplate Init
 
@@ -40,6 +42,33 @@ pxxl init --new nextjs-pnpm-pxxl --name web-app --domain pxxl.pro
 Available starters include Express + Bun, Hono + Bun, Fastify + pnpm, Next.js + pnpm, Astro + npm, Vite React + npm, Vite React + pnpm, static CDN gallery, and Express API.
 
 `pxxl init --new` reads the boilerplate manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command.
+
+## Teams
+
+```bash
+pxxl team list
+pxxl team use <team-id>
+pxxl team current
+pxxl team clear
+```
+
+Use `scope=team`, `scope=database`, `scope=deploy`, or `scope=all` to list teams. The selected spaceship is stored locally and used by database commands.
+
+## Databases
+
+```bash
+pxxl db list
+pxxl db create --name app-db --type postgres
+pxxl db get <database-id>
+pxxl db start <database-id>
+pxxl db stop <database-id>
+pxxl db restart <database-id>
+pxxl db stats <database-id>
+pxxl db tables <database-id>
+pxxl db delete <database-id>
+```
+
+Use `scope=database` or `scope=all`. Read operations work with `permission=read`; create/update/lifecycle/delete require `permission=read_write`.
 
 <Warning>
 Keep API keys out of repositories, client bundles, screenshots, and build logs. Use a key with the smallest needed scope.

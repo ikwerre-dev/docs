@@ -85,6 +85,7 @@
               "api/pxxl-cli",
               "api/pxxl-deploy",
               "api/pxxlignore",
+              "api/database-api",
               "api/domain-reseller-sdk",
               "api/npm-publishing",
               "api/deployments"
