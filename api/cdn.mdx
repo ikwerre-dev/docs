@@ -6,6 +6,8 @@ description: "Use the Pxxl CDN API to upload files to public or private storage 
 
 The Pxxl CDN API gives your backend direct access to object storage, asset management, and edge analytics. Use it to upload build artifacts, serve static files from edge cache nodes, track monthly bandwidth consumption, and pull proxy traffic logs for security analysis — all without leaving your deployment workflow.
 
+This page covers the raw HTTP endpoints. If you would rather use a typed client, jump to the [Node SDK](/api/cdn-node-sdk) or [Go SDK](/api/cdn-go-sdk). For ready-to-deploy starter projects that already wire up uploads, see [Boilerplates](/api/cdn-boilerplates).
+
 ## Endpoints
 
 | HTTP Method | API Path | Objective |
@@ -65,5 +67,5 @@ curl -H "Authorization: Bearer $PXXL_API_KEY" \
 Proxy logs include allowed and blocked request counts, risk index ratings, GeoIP concentration breakdowns, and the top IP sources contributing the highest traffic volumes to your project domains.
 
 <Tip>
-If you accidentally expose a CDN upload API key in a client bundle, a public repository, or a build log, rotate it immediately from **Dashboard > API Keys**. Delete the compromised key, create a replacement with the same CDN upload and read scopes, and update the secret in your backend environment before redeploying.
+  If you accidentally expose a CDN upload API key in a client bundle, a public repository, or a build log, rotate it immediately from **Dashboard \> API Keys**. Delete the compromised key, create a replacement with the same CDN upload and read scopes, and update the secret in your backend environment before redeploying.
 </Tip>

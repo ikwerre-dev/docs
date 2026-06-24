@@ -71,24 +71,43 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "API",
+            "group": "API Reference",
             "pages": [
               "api/overview",
               "api/authentication",
+              "api/deployments"
+            ]
+          },
+          {
+            "group": "Database",
+            "pages": [
+              "api/database-api"
+            ]
+          },
+          {
+            "group": "CDN",
+            "pages": [
               "api/cdn",
               "api/cdn-authentication",
               "api/cdn-uploads",
               "api/cdn-node-sdk",
               "api/cdn-go-sdk",
               "api/cdn-examples",
-              "api/cdn-boilerplates",
+              "api/cdn-boilerplates"
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
               "api/pxxl-cli",
               "api/pxxl-deploy",
-              "api/pxxlignore",
-              "api/database-api",
-              "api/domain-reseller-sdk",
-              "api/npm-publishing",
-              "api/deployments"
+              "api/pxxlignore"
+            ]
+          },
+          {
+            "group": "Domains",
+            "pages": [
+              "api/domain-reseller-sdk"
             ]
           }
         ]

@@ -4,7 +4,9 @@ sidebarTitle: "CLI Deploy"
 description: "Deploy a local project to Pxxl using SpaceDrop, pxxl.toml, and .pxxlignore."
 ---
 
-`pxxl deploy` is SpaceDrop-first. It reads `pxxl.toml`, applies `.pxxlignore`, creates a deterministic temporary ZIP, uploads it as a private source asset, and queues a normal Pxxl deployment.
+`pxxl deploy` lets you ship a local project to Pxxl without pushing to GitHub first. It is SpaceDrop-first: the CLI reads `pxxl.toml`, applies `.pxxlignore`, creates a deterministic temporary ZIP of your working directory, uploads it as a private source asset, and queues a normal Pxxl deployment — the same build pipeline that runs for GitHub-imported projects.
+
+This is the fastest path for solo deploys, throwaway demos, CI jobs that build artifacts locally, and any workflow where you do not want every commit to trigger a deploy.
 
 ```bash
 pxxl init --new vite-react-pxxl --name my-app --domain pxxl.pro

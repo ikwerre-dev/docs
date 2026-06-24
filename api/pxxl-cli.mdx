@@ -4,13 +4,23 @@ sidebarTitle: "Pxxl CLI"
 description: "Install and use the @pxxlapp/pxxl npm package for login, SpaceDrop deploys, CDN commands, database management, teams, and domain reseller lookups."
 ---
 
-Install the CLI from npm:
+The Pxxl CLI is a single binary that wraps every public-facing API surface — deploys, environment variables, databases, CDN, teams, and domain reseller lookups. It is the same code path the dashboard uses, so anything you can do in the UI you can script from your terminal or CI runner.
+
+Use it to deploy a local folder with one command (SpaceDrop), push `.env` files into projects, provision databases for preview environments, and upload static assets to the CDN — all authenticated with a single API key.
+
+## Install
+
+Install the CLI globally from npm:
 
 ```bash
 npm install -g @pxxlapp/pxxl
 ```
 
-Log in with a Pxxl API key:
+The npm package publishes as `@pxxlapp/pxxl` because the bare `pxxl` name is reserved, but the installed binary is just `pxxl`.
+
+## Authenticate
+
+Log in once with a Pxxl API key:
 
 ```bash
 pxxl login --api-key pxxl_...
@@ -41,7 +51,7 @@ pxxl init --new express-bun-pxxl --name my-api --domain pxxl.pro
 pxxl init --new nextjs-pnpm-pxxl --name web-app --domain pxxl.pro
 ```
 
-Available starters include Express + Bun, Hono + Bun, Fastify + pnpm, Next.js + pnpm, Astro + npm, Vite React + npm, Vite React + pnpm, static CDN gallery, and Express API.
+Available starters include Express \+ Bun, Hono \+ Bun, Fastify \+ pnpm, Next.js \+ pnpm, Astro \+ npm, Vite React \+ npm, Vite React \+ pnpm, static CDN gallery, and Express API.
 
 `pxxl init --new` reads the boilerplate manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command.
 
@@ -87,5 +97,5 @@ pxxl db delete <database-id>
 Use `scope=database` or `scope=all`. Read operations work with `permission=read`; create/update/lifecycle/delete require `permission=read_write`.
 
 <Warning>
-Keep API keys out of repositories, client bundles, screenshots, and build logs. Use a key with the smallest needed scope.
+  Keep API keys out of repositories, client bundles, screenshots, and build logs. Use a key with the smallest needed scope.
 </Warning>
