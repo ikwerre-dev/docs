@@ -1,10 +1,10 @@
 ---
 title: "Domain Reseller SDK"
 sidebarTitle: "Domain Reseller"
-description: "Search domains, fetch TLD pricing, inspect promo prices, and respect Pxxl domain API rate limits."
+description: "Search domains, fetch TLD pricing, inspect invoices, inspect promo prices, and respect Pxxl domain API rate limits."
 ---
 
-The `pxxl` package includes domain reseller methods for availability and pricing.
+The `pxxl` package includes domain reseller methods for availability, pricing, invoices, and payment URLs.
 
 ```ts
 import { PxxlClient } from '@pxxlapp/pxxl';
@@ -14,17 +14,12 @@ const pxxl = new PxxlClient({ apiKey: process.env.PXXL_API_KEY! });
 const search = await pxxl.searchDomains({ query: 'pxxl.cv' });
 const prices = await pxxl.listTLDs();
 const cv = await pxxl.searchTLDs('cv');
+const invoices = await pxxl.listDomainInvoices();
+const invoice = await pxxl.getDomainInvoice('invoice_id');
+const payment = await pxxl.getDomainInvoicePaymentUrl('invoice_id');
 ```
 
 Domain search returns availability, purchase type, provider, TLD pricing, renewal pricing, transfer pricing, restrictions, and active promo fields such as `.cv` bonus amounts when a promo is available.
-
-## CLI
-
-```bash
-pxxl domain search pxxl.cv
-pxxl domain tlds
-pxxl domain tlds --search cv
-```
 
 ## API Endpoints
 

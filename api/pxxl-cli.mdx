@@ -27,8 +27,10 @@ The CLI stores credentials in your user config directory with restricted file pe
 | `pxxl whoami` | Check the authenticated account. |
 | `pxxl init --new` | Copy a Pxxl boilerplate and write `pxxl.toml` plus `.pxxlignore`. |
 | `pxxl deploy` | Zip the current project and deploy it through SpaceDrop. |
+| `pxxl redeploy` | Trigger a fresh deployment for an existing project. |
+| `pxxl pull` | Clone or update the Git repo attached to a Pxxl project. |
+| `pxxl env ...` | Push local env files or list project envs. |
 | `pxxl cdn ...` | Upload, list, download, delete, and summarize CDN assets. |
-| `pxxl domain ...` | Search domains, TLD pricing, and promo data. |
 | `pxxl team ...` | List spaceships and select one for scoped operations. |
 | `pxxl db ...` | Create, list, inspect, and manage Pxxl databases. |
 
@@ -42,6 +44,20 @@ pxxl init --new nextjs-pnpm-pxxl --name web-app --domain pxxl.pro
 Available starters include Express + Bun, Hono + Bun, Fastify + pnpm, Next.js + pnpm, Astro + npm, Vite React + npm, Vite React + pnpm, static CDN gallery, and Express API.
 
 `pxxl init --new` reads the boilerplate manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command.
+
+## Project Automation
+
+```bash
+pxxl redeploy <project-id>
+pxxl pull <project-id> ./my-app
+pxxl env list <project-id>
+pxxl env push <project-id> --file .env
+pxxl env push <project-id> --file .env.production --global
+```
+
+`pxxl pull` clones the Git repo and branch attached to a Pxxl project. If the destination is already a git checkout, it fetches and fast-forwards the selected branch. It refuses to overwrite a non-git, non-empty folder.
+
+Use `scope=deploy`, `scope=project`, or `scope=all`. Redeploy and env updates require `permission=read_write`.
 
 ## Teams
 
