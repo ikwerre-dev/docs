@@ -1,0 +1,33 @@
+---
+title: "Publish the Pxxl CLI to npm"
+sidebarTitle: "npm Publishing"
+description: "Release the root pxxl package with tests, dry-run packaging, 2FA, and a smoke install."
+---
+
+Run this from the root of `pxxlspace/pxxlspace`.
+
+```bash
+npm login
+npm test
+npm run build
+npm pack --dry-run
+npm version patch
+npm publish --access public
+```
+
+Before publishing, confirm the package name is controlled by the Pxxl npm account. If `pxxl` is unavailable, publish as `@pxxl/cli` while keeping the binary name as `pxxl`.
+
+Recommended release checks:
+
+| Check | Why |
+| --- | --- |
+| `npm test` | Builds the SDK and runs CLI/unit tests. |
+| `npm pack --dry-run` | Confirms only `dist`, guides, boilerplates, skills, and package metadata ship. |
+| npm 2FA | Protects releases from account compromise. |
+| provenance | Adds publish-chain metadata where supported. |
+| smoke install | Verifies the binary works after publish. |
+
+```bash
+npm install -g pxxl
+pxxl --help
+```

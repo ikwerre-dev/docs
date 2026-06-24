@@ -82,6 +82,11 @@
               "api/cdn-go-sdk",
               "api/cdn-examples",
               "api/cdn-boilerplates",
+              "api/pxxl-cli",
+              "api/pxxl-deploy",
+              "api/pxxlignore",
+              "api/domain-reseller-sdk",
+              "api/npm-publishing",
               "api/deployments"
             ]
           }

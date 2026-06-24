@@ -1,0 +1,35 @@
+---
+title: "Pxxl CLI"
+sidebarTitle: "Pxxl CLI"
+description: "Install and use the pxxl npm package for login, SpaceDrop deploys, CDN commands, and domain reseller lookups."
+---
+
+Install the CLI from npm:
+
+```bash
+npm install -g pxxl
+```
+
+Log in with a Pxxl API key:
+
+```bash
+pxxl login --api-key pxxl_...
+```
+
+The CLI stores credentials in your user config directory with restricted file permissions. `PXXL_API_KEY` always overrides the stored key.
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `pxxl login` | Store an API key for local CLI use. |
+| `pxxl logout` | Remove the stored API key. |
+| `pxxl whoami` | Check the authenticated account. |
+| `pxxl init --new` | Copy a Pxxl boilerplate and write `pxxl.toml` plus `.pxxlignore`. |
+| `pxxl deploy` | Zip the current project and deploy it through SpaceDrop. |
+| `pxxl cdn ...` | Upload, list, download, delete, and summarize CDN assets. |
+| `pxxl domain ...` | Search domains, TLD pricing, and promo data. |
+
+<Warning>
+Keep API keys out of repositories, client bundles, screenshots, and build logs. Use a key with the smallest needed scope.
+</Warning>
