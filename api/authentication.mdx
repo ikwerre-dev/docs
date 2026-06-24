@@ -30,7 +30,7 @@ Authorization: Bearer YOUR_PLATFORM_API_KEY
 The example below shows a backend-safe API helper. Store `PXXL_API_KEY` in your server environment variables and call Pxxl from there — never from the browser.
 
 ```typescript lib/pxxl.ts
-const PXXL_API_BASE = process.env.PXXL_API_URL || 'https://gateway.pxxl.dev/api/v3';
+const PXXL_API_BASE = 'https://gateway.pxxl.app/api/v3';
 
 async function callPxxl<T>(path: string, options?: RequestInit): Promise<T> {
   const apiKey = process.env.PXXL_API_KEY;
