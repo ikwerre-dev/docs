@@ -1,12 +1,12 @@
 ---
 title: "Pxxl CLI"
 sidebarTitle: "Pxxl CLI"
-description: "Install and use the @pxxlapp/pxxl npm package for login, SpaceDrop deploys, CDN commands, database management, teams, and domain reseller lookups."
+description: "Install and use the @pxxlapp/pxxl npm package for login, CLI deploys, CDN commands, database management, teams, and domain reseller lookups."
 ---
 
 The Pxxl CLI is a single binary that wraps every public-facing API surface — deploys, environment variables, databases, CDN, teams, and domain reseller lookups. It is the same code path the dashboard uses, so anything you can do in the UI you can script from your terminal or CI runner.
 
-Use it to deploy a local folder with one command (SpaceDrop), push `.env` files into projects, provision databases for preview environments, and upload static assets to the CDN — all authenticated with a single API key.
+Use it to deploy a local folder with one command, push `.env` files into projects, inspect recent deployments, provision databases for preview environments, and upload static assets to the CDN — all authenticated with a single API key.
 
 ## Install
 
@@ -36,8 +36,10 @@ The CLI validates the key before saving it, then stores credentials in your user
 | `pxxl logout` | Remove the stored API key. |
 | `pxxl whoami` | Check the authenticated account. |
 | `pxxl init --new` | Copy a Pxxl boilerplate and write `pxxl.toml` plus `.pxxlignore`. |
-| `pxxl deploy` | Zip the current project and deploy it through SpaceDrop. |
+| `pxxl deploy` | Package the current project and deploy it on Pxxl. |
 | `pxxl redeploy` | Trigger a fresh deployment for an existing project. |
+| `pxxl projects ...` | List projects or inspect one project. |
+| `pxxl deployments ...` | Show recent deployments or inspect one deployment. |
 | `pxxl pull` | Clone or update the Git repo attached to a Pxxl project. |
 | `pxxl env ...` | Push local env files or list project envs. |
 | `pxxl cdn ...` | Upload, list, download, delete, and summarize CDN assets. |
@@ -47,13 +49,14 @@ The CLI validates the key before saving it, then stores credentials in your user
 ## Boilerplate Init
 
 ```bash
-pxxl init --new express-bun-pxxl --name my-api --domain pxxl.pro
-pxxl init --new nextjs-pnpm-pxxl --name web-app --domain pxxl.pro
+pxxl init --new
+pxxl init --new express-bun --name my-api --domain pxxl.pro
+pxxl init --new nextjs-pnpm --name web-app --domain pxxl.pro
 ```
 
-Available starters include Express \+ Bun, Hono \+ Bun, Fastify \+ pnpm, Next.js \+ pnpm, Astro \+ npm, Vite React \+ npm, Vite React \+ pnpm, static CDN gallery, and Express API.
+Interactive init lists clean framework names such as Express, Vite React, HTML Static, PHP, FastAPI, Go HTTP, and Rust Axum. When a framework has variants, the CLI asks for the package manager next.
 
-`pxxl init --new` reads the boilerplate manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command.
+`pxxl init --new` reads the boilerplate manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command. It creates a new folder by default, validates the project name and selected Pxxl suffix, and can deploy the first version immediately.
 
 ## Project Automation
 

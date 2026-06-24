@@ -1,10 +1,10 @@
 ---
 title: ".pxxlignore"
 sidebarTitle: ".pxxlignore"
-description: "Control which files the Pxxl CLI packages for SpaceDrop deploys."
+description: "Control which files the Pxxl CLI packages for deploys."
 ---
 
-`pxxl deploy` reads `.pxxlignore` before creating the SpaceDrop archive. The default ignore file excludes heavy folders, local caches, Git metadata, and secret-like files.
+`pxxl deploy` reads `.pxxlignore` before creating the deploy archive. The default ignore file excludes heavy folders, local caches, Git metadata, local env files, the ignore file itself, and secret-like files.
 
 ```gitignore
 .git
@@ -20,6 +20,7 @@ build
 .turbo
 .cache
 .config/pxxl
+.pxxlignore
 pxxl-source.zip
 ```
 
