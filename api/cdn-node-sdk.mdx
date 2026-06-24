@@ -1,0 +1,39 @@
+---
+title: "Pxxl CDN Node SDK"
+sidebarTitle: "Node SDK"
+description: "Use @pxxl/cdn from backend Node.js applications to upload, list, download, and delete CDN assets."
+---
+
+The official Node SDK lives in the public Pxxl repository:
+
+```bash
+npm install @pxxl/cdn
+```
+
+```ts
+import { PxxlCDN } from '@pxxl/cdn';
+
+const cdn = new PxxlCDN({ apiKey: process.env.PXXL_API_KEY! });
+
+const asset = await cdn.uploadAsset({
+  file: new Blob(['hello from Pxxl']),
+  fileName: 'hello.txt',
+  visibility: 'public',
+});
+
+console.log(asset.publicUrl);
+```
+
+## Common Operations
+
+```ts
+await cdn.summary();
+await cdn.listAssets({ limit: 25 });
+await cdn.downloadAsset(asset.id);
+await cdn.deleteAsset(asset.id);
+await cdn.usage({ limit: 100 });
+```
+
+<Tip>
+Use `scope=cdn` and `permission=read_write` for upload services. Use `permission=read` for reporting jobs that only list or download assets.
+</Tip>

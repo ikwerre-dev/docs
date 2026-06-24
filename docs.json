@@ -76,6 +76,12 @@
               "api/overview",
               "api/authentication",
               "api/cdn",
+              "api/cdn-authentication",
+              "api/cdn-uploads",
+              "api/cdn-node-sdk",
+              "api/cdn-go-sdk",
+              "api/cdn-examples",
+              "api/cdn-boilerplates",
               "api/deployments"
             ]
           }

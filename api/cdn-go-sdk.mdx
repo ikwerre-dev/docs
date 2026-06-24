@@ -1,0 +1,41 @@
+---
+title: "Pxxl CDN Go SDK"
+sidebarTitle: "Go SDK"
+description: "Use the Pxxl Go CDN client for typed uploads, downloads, summaries, and asset management."
+---
+
+The Go SDK module is published from the public Pxxl repository:
+
+```bash
+go get github.com/pxxlspace/pxxlspace/public/sdks/go/pxxl
+```
+
+```go
+package main
+
+import (
+  "context"
+  "os"
+  "strings"
+
+  "github.com/pxxlspace/pxxlspace/public/sdks/go/pxxl"
+)
+
+func main() {
+  client, err := pxxl.NewClient(os.Getenv("PXXL_API_KEY"))
+  if err != nil {
+    panic(err)
+  }
+  asset, err := client.UploadAsset(context.Background(), pxxl.UploadAssetInput{
+    FileName:   "hello.txt",
+    Reader:     strings.NewReader("hello from Pxxl"),
+    Visibility: "public",
+  })
+  if err != nil {
+    panic(err)
+  }
+  println(asset.PublicURL)
+}
+```
+
+The client uses `net/http`, accepts any `io.Reader` for uploads, and returns typed API errors for non-2xx responses.
