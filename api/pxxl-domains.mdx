@@ -1,0 +1,87 @@
+---
+title: "CLI Domains"
+sidebarTitle: "Domains"
+description: "Check domains, connect custom domains, and inspect proxy stats from the Pxxl CLI."
+---
+
+The CLI domain commands cover both operational checks and proxy analytics. Use them when you want to verify DNS, see whether a hostname is already used on Pxxl, connect a custom domain, or inspect traffic stats without opening the dashboard.
+
+## List Domains
+
+```bash
+pxxl domains list
+pxxl domains list --team <team-id>
+```
+
+Lists domains available to the authenticated account or selected spaceship.
+
+## Check a Domain
+
+```bash
+pxxl domains check example.com
+```
+
+`pxxl domains check` combines local DNS checks with Pxxl-side ownership and proxy checks.
+
+| Check | Source |
+| --- | --- |
+| DNS `A`, `AAAA`, `CNAME`, `NS` | Local DNS resolver. |
+| HTTPS reachability | Public HTTPS request from your machine. |
+| Already used | Pxxl domain and proxy route records. |
+| Owned by you | Pxxl account or selected spaceship. |
+| Proxy route | Pxxl global proxy binding state. |
+| SSL | Pxxl route SSL state when available. |
+
+The command returns statuses such as `available`, `owned`, `taken`, or `blocked`.
+
+## Connect a Domain
+
+```bash
+pxxl domains connect
+pxxl domains connect example.com --project <project-id>
+```
+
+Interactive connect checks the hostname first, then shows the DNS records needed for Pxxl routing:
+
+```text
+A     @     193.181.212.65
+CNAME www   example.com
+```
+
+After DNS propagates, finish or verify the connection from the project domain page:
+
+```bash
+pxxl open --dashboard
+```
+
+<Tip>
+  For production domains, set DNS first, then keep checking with `pxxl domains check example.com` until the expected records resolve.
+</Tip>
+
+## Domain Stats
+
+```bash
+pxxl domains stats example.com
+pxxl domains stats example.com --timeframe 30d
+```
+
+Domain stats show request count, bandwidth, latency, blocked requests, errors, top countries, and top cities using the same proxy analytics pipeline as the dashboard.
+
+Supported timeframes:
+
+```text
+24h
+48h
+72h
+7d
+30d
+```
+
+## Permissions
+
+Domain commands require an API key with `scope=domain`, `scope=domains`, `scope=reselling`, or `scope=all`.
+
+| Operation | Required permission |
+| --- | --- |
+| `list`, `check`, `stats` | `read` |
+| `connect` | `read` for checks; dashboard connection actions require write access |

@@ -100,8 +100,14 @@
             "group": "CLI",
             "pages": [
               "api/pxxl-cli",
+              "api/pxxl-diagnostics",
+              "api/pxxl-boilerplates",
               "api/pxxl-deploy",
-              "api/pxxlignore"
+              "api/pxxl-env",
+              "api/pxxl-domains",
+              "api/pxxl-logs-open",
+              "api/pxxlignore",
+              "api/npm-publishing"
             ]
           },
           {

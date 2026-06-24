@@ -35,16 +35,21 @@ The CLI validates the key before saving it, then stores credentials in your user
 | `pxxl login` | Store an API key for local CLI use. |
 | `pxxl logout` | Remove the stored API key. |
 | `pxxl whoami` | Check the authenticated account. |
+| `pxxl doctor` | Check auth, internet, git state, config files, package manager, build commands, and deploy issues. |
+| `pxxl inspect` | Show detected framework, package manager, runtime, start command, env files, and deploy size. |
 | `pxxl init --new` | Copy a Pxxl boilerplate and write `pxxl.toml` plus `.pxxlignore`. |
 | `pxxl deploy` | Package the current project and deploy it on Pxxl. |
 | `pxxl redeploy` | Trigger a fresh deployment for an existing project. |
 | `pxxl projects ...` | List projects or inspect one project. |
 | `pxxl deployments ...` | Show recent deployments or inspect one deployment. |
+| `pxxl logs` | Fetch project runtime logs or deployment build logs. |
+| `pxxl open` | Open the current project dashboard, deployment URL, or live URL. |
 | `pxxl pull` | Clone or update the Git repo attached to a Pxxl project. |
-| `pxxl env ...` | Push local env files or list project envs. |
+| `pxxl env ...` | List, diff, and push project env vars. |
 | `pxxl cdn ...` | Upload, list, download, delete, and summarize CDN assets. |
 | `pxxl team ...` | List spaceships and select one for scoped operations. |
 | `pxxl db ...` | Create, list, inspect, and manage Pxxl databases. |
+| `pxxl domains ...` | Check domains, connect custom domains, and inspect proxy stats. |
 
 ## Boilerplate Init
 
@@ -63,14 +68,31 @@ Interactive init lists clean framework names such as Express, Vite React, HTML S
 ```bash
 pxxl redeploy <project-id>
 pxxl pull <project-id> ./my-app
+pxxl logs --project <project-id>
+pxxl logs --deployment <deployment-id>
+pxxl open
 pxxl env list <project-id>
+pxxl env diff <project-id> --file .env.production
 pxxl env push <project-id> --file .env
 pxxl env push <project-id> --file .env.production --global
 ```
 
 `pxxl pull` clones the Git repo and branch attached to a Pxxl project. If the destination is already a git checkout, it first verifies that the local `origin` matches the project repo, checks that the working tree is clean, then fetches and fast-forwards the selected branch. It refuses to overwrite a non-git, non-empty folder.
 
+`pxxl env diff` compares local dotenv values against encrypted remote values server-side, then returns only statuses such as `same`, `changed`, `missing_remote`, and `missing_local`.
+
 Use `scope=deploy` or `scope=all` for deploy/redeploy. Use `scope=project`, `scope=env`, or `scope=all` for env reads and writes. Write operations require `permission=read_write`.
+
+## Domains
+
+```bash
+pxxl domains list
+pxxl domains check example.com
+pxxl domains connect example.com --project <project-id>
+pxxl domains stats example.com --timeframe 30d
+```
+
+`pxxl domains check` combines local DNS checks with Pxxl-side ownership, SSL, and proxy route state. It is useful before connecting a custom domain or when debugging DNS propagation.
 
 ## Teams
 
