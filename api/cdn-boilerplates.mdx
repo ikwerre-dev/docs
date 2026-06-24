@@ -1,7 +1,7 @@
 ---
 title: "Pxxl CDN Boilerplates"
 sidebarTitle: "Boilerplates"
-description: "Start from Pxxl-ready boilerplates for static CDN galleries, Vite React apps, and Express APIs."
+description: "Start from Pxxl-ready boilerplates for static sites, React, Express, Bun, Hono, Fastify, Next.js, and Astro."
 ---
 
 The public Pxxl repository includes deploy-ready boilerplates under `boilerplates`.
@@ -9,7 +9,20 @@ The public Pxxl repository includes deploy-ready boilerplates under `boilerplate
 | Boilerplate | Use case |
 | --- | --- |
 | `static-cdn-gallery` | A fast static gallery that renders CDN-hosted assets. |
-| `vite-react-pxxl` | A React app configured for Pxxl deployment and CDN asset usage. |
+| `vite-react-pxxl` | A React app configured for Pxxl deployment and CDN asset usage with pnpm. |
+| `vite-react-npm-pxxl` | A Vite React starter using npm. |
 | `express-api-pxxl` | A small API backend that can safely proxy CDN uploads with server-held API keys. |
+| `express-bun-pxxl` | An Express API starter running on Bun. |
+| `hono-bun-pxxl` | A tiny Hono API starter running on Bun. |
+| `fastify-pnpm-pxxl` | A Fastify API starter using pnpm. |
+| `nextjs-pnpm-pxxl` | A minimal Next.js App Router starter using pnpm. |
+| `astro-npm-pxxl` | A fast Astro content site starter using npm. |
 
 Each boilerplate includes a `pxxl.boilerplate.json` manifest and an SEO-focused README that explains how to deploy the project on Pxxl.
+
+```bash
+pxxl init --new express-bun-pxxl --name my-api --domain pxxl.pro
+pxxl deploy
+```
+
+The CLI reads the manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command.

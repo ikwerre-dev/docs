@@ -30,6 +30,17 @@ The CLI stores credentials in your user config directory with restricted file pe
 | `pxxl cdn ...` | Upload, list, download, delete, and summarize CDN assets. |
 | `pxxl domain ...` | Search domains, TLD pricing, and promo data. |
 
+## Boilerplate Init
+
+```bash
+pxxl init --new express-bun-pxxl --name my-api --domain pxxl.pro
+pxxl init --new nextjs-pnpm-pxxl --name web-app --domain pxxl.pro
+```
+
+Available starters include Express + Bun, Hono + Bun, Fastify + pnpm, Next.js + pnpm, Astro + npm, Vite React + npm, Vite React + pnpm, static CDN gallery, and Express API.
+
+`pxxl init --new` reads the boilerplate manifest and writes matching `pxxl.toml` defaults for package manager, framework, port, install command, build command, and start command.
+
 <Warning>
 Keep API keys out of repositories, client bundles, screenshots, and build logs. Use a key with the smallest needed scope.
 </Warning>
