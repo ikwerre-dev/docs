@@ -39,24 +39,61 @@ The command returns statuses such as `available`, `owned`, `taken`, or `blocked`
 ```bash
 pxxl domains connect
 pxxl domains connect example.com --project <project-id>
+pxxl domains connect app.example.com api.example.com --project <project-id>
 ```
 
-Interactive connect checks the hostname first, then shows the DNS records needed for Pxxl routing:
+Connect attaches the domain to the project and returns the expected DNS records needed for Pxxl routing:
 
 ```text
 A     @     193.181.212.65
 CNAME www   example.com
 ```
 
-After DNS propagates, finish or verify the connection from the project domain page:
+When you pass multiple domains, the CLI processes them one by one. Domains inside your plan allowance are connected, and domains above the allowance are shown as rejected with the plan limit and current usage.
+
+After DNS propagates, verify the connection:
 
 ```bash
-pxxl open --dashboard
+pxxl domains verify example.com --project <project-id>
+pxxl domains activate <domain-id>
 ```
 
 <Tip>
   For production domains, set DNS first, then keep checking with `pxxl domains check example.com` until the expected records resolve.
 </Tip>
+
+## Managed DNS Records
+
+For Pxxl-managed domains, the CLI can list and edit DNS records.
+
+```bash
+pxxl domains records <domain-id>
+pxxl domains records add <domain-id> --type A --name @ --value 193.181.212.65 --ttl 60
+pxxl domains records update <domain-id> --record-id <record-id> --type A --name @ --value 193.181.212.66
+pxxl domains records delete <domain-id> --record-id <record-id>
+```
+
+Pxxl validates record conflicts before saving. For example, the same hostname cannot be both a `CNAME` and an `A` record.
+
+## Nameservers and Zone Status
+
+```bash
+pxxl domains nameservers verify <domain-id>
+pxxl domains nameservers set <domain-id> --values ns1.example.com,ns2.example.com
+pxxl domains nameservers reset <domain-id>
+pxxl domains zone <domain-id>
+pxxl domains switch-to-pxxl-dns <domain-id>
+```
+
+Use these commands when a domain is managed by Pxxl DNS or when you need to move a managed domain back to Pxxl nameservers.
+
+## Certificates
+
+```bash
+pxxl domains cert <domain-id> --out example.com.pem
+```
+
+This downloads the public proxy certificate as a PEM file.
 
 ## Domain Stats
 
@@ -84,4 +121,15 @@ Domain commands require an API key with `scope=domain`, `scope=domains`, `scope=
 | Operation | Required permission |
 | --- | --- |
 | `list`, `check`, `stats` | `read` |
-| `connect` | `read` for checks; dashboard connection actions require write access |
+| `connect`, `verify`, `activate`, DNS writes, nameserver writes | `read_write` |
+
+## Plan Limits
+
+If your plan only allows a fixed number of custom domains, `pxxl domains connect` will connect the domains that fit and show a clear rejection for the rest:
+
+```text
+domain        status  message                                             limit  used
+extra.com     403     Your current plan allows up to 1 custom domains.     1      1
+```
+
+Upgrade the plan or remove an unused custom domain before adding more.

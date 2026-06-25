@@ -1,0 +1,130 @@
+---
+title: "Domain Node SDK"
+sidebarTitle: "Node SDK"
+description: "Use @pxxlapp/pxxl to connect domains to projects, verify DNS, manage records, check activation, and download proxy certificates."
+---
+
+The Node SDK uses the same domain workflow as the Pxxl dashboard. Use it from a trusted backend, CI job, or internal tool with an API key that has `scope=domain`, `scope=domains`, or `scope=all`.
+
+```bash
+npm install @pxxlapp/pxxl
+```
+
+```ts
+import { PxxlClient } from '@pxxlapp/pxxl';
+
+const pxxl = new PxxlClient({ apiKey: process.env.PXXL_API_KEY! });
+```
+
+## Connect a Domain
+
+```ts
+const connected = await pxxl.connectDomain({
+  domain: 'example.com',
+  projectId: 'proj_123',
+});
+
+console.log(connected);
+```
+
+The response includes the domain ID, status, management mode, expected `A` record target, route status, and whether a deployment refresh is pending.
+
+## Bulk Connect
+
+`connectDomains` processes domains one by one. Valid domains are accepted and plan-limit failures are returned in `rejected`, so you can show partial success instead of losing the whole batch.
+
+```ts
+const result = await pxxl.connectDomains([
+  { domain: 'app.example.com', projectId: 'proj_123' },
+  { domain: 'api.example.com', projectId: 'proj_123' },
+]);
+
+console.log(result.accepted);
+console.log(result.rejected);
+```
+
+When a plan limit is exceeded, rejected items include the HTTP status, message, limit, used count, and backend details.
+
+## Verify Records and Activation
+
+```ts
+await pxxl.verifyDomainRecord({
+  domain: 'example.com',
+  projectId: 'proj_123',
+});
+
+await pxxl.activateDomain('dom_123');
+await pxxl.getDomainZoneStatus('dom_123');
+```
+
+Use `verifyDomainRecord` after adding the expected DNS records. Use `activateDomain` to check zone activation, proxy routing, and SSL readiness.
+
+## DNS Records
+
+Pxxl-managed domains can be edited through the SDK.
+
+```ts
+await pxxl.listDomainDNSRecords('dom_123');
+
+await pxxl.createDomainDNSRecord('dom_123', {
+  type: 'A',
+  name: '@',
+  value: '193.181.212.65',
+  ttl: 60,
+});
+
+await pxxl.updateDomainDNSRecords('dom_123', {
+  recordId: 'rec_123',
+  type: 'A',
+  name: '@',
+  value: '193.181.212.66',
+});
+
+await pxxl.deleteDomainDNSRecord('dom_123', {
+  recordId: 'rec_123',
+});
+```
+
+Pxxl blocks invalid `CNAME` and `A` record conflicts before saving.
+
+## Nameservers and Pxxl DNS
+
+```ts
+await pxxl.verifyDomainNameservers('dom_123');
+await pxxl.updateDomainNameservers('dom_123', ['ns1.example.com', 'ns2.example.com']);
+await pxxl.switchDomainToPxxlDNS('dom_123');
+```
+
+For Pxxl-managed domains, you can also create managed subdomains:
+
+```ts
+await pxxl.createManagedSubdomain('dom_123', {
+  label: 'api',
+  projectId: 'proj_123',
+});
+```
+
+## Certificates
+
+```ts
+const certificate = await pxxl.downloadDomainCertificate('dom_123');
+```
+
+The returned `Blob` contains the public proxy certificate PEM.
+
+## Plan Limit Errors
+
+If the account exceeds its custom-domain allowance, the API returns a structured error:
+
+```json
+{
+  "code": "DOMAIN_LIMIT_EXCEEDED",
+  "message": "Your current plan allows up to 1 custom domains. You already have 1. Upgrade your plan to add more domains.",
+  "limit": 1,
+  "used": 1,
+  "accepted": 0,
+  "rejected": ["example.com"]
+}
+```
+
+Use `connectDomains` when submitting multiple domains so the SDK can keep accepted domains separate from rejected ones.

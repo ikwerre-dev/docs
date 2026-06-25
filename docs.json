@@ -113,7 +113,9 @@
           {
             "group": "Domains",
             "pages": [
-              "api/domain-reseller-sdk"
+              "api/domain-reseller-sdk",
+              "api/domain-node-sdk",
+              "api/domain-go-sdk"
             ]
           }
         ]

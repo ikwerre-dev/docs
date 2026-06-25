@@ -1,0 +1,114 @@
+---
+title: "Domain Go SDK"
+sidebarTitle: "Go SDK"
+description: "Use the Pxxl Go SDK to connect domains, verify records, manage DNS, check activation, and download proxy certificates."
+---
+
+Install the Go SDK from the public Pxxl repository:
+
+```bash
+go get github.com/pxxlspace/pxxlspace/sdks/go/pxxl
+```
+
+```go
+client, err := pxxl.NewClient(os.Getenv("PXXL_API_KEY"))
+if err != nil {
+  log.Fatal(err)
+}
+```
+
+Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only keys can list and check domains. Write keys can connect domains and modify DNS records.
+
+## Connect a Domain
+
+```go
+connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainInput{
+  Domain: "example.com",
+  ProjectID: "proj_123",
+})
+if err != nil {
+  log.Fatal(err)
+}
+
+fmt.Println(connected["domainId"])
+```
+
+## Check and Verify
+
+```go
+check, err := client.CheckDomain(context.Background(), "example.com", "")
+verify, err := client.VerifyDomainRecord(context.Background(), pxxl.VerifyDomainRecordInput{
+  Domain: "example.com",
+  ProjectID: "proj_123",
+})
+activation, err := client.ActivateDomain(context.Background(), "dom_123", "")
+zone, err := client.GetDomainZoneStatus(context.Background(), "dom_123", "")
+```
+
+`CheckDomain` inspects Pxxl ownership, proxy state, SSL state, and availability. `VerifyDomainRecord` checks that the project DNS records are pointed correctly.
+
+## DNS Records
+
+```go
+records, err := client.ListDomainDNSRecords(context.Background(), "dom_123", "")
+
+created, err := client.CreateDomainDNSRecord(context.Background(), "dom_123", pxxl.DomainDNSRecordInput{
+  Type: "A",
+  Name: "@",
+  Value: "193.181.212.65",
+  TTL: 60,
+})
+
+updated, err := client.UpdateDomainDNSRecords(context.Background(), "dom_123", pxxl.DomainDNSRecordInput{
+  RecordID: "rec_123",
+  Type: "A",
+  Name: "@",
+  Value: "193.181.212.66",
+})
+
+deleted, err := client.DeleteDomainDNSRecord(context.Background(), "dom_123", pxxl.DomainDNSRecordInput{
+  RecordID: "rec_123",
+})
+```
+
+For `.cv` and other Pxxl-managed domains, record changes are validated and logged for rollback in the dashboard.
+
+## Certificates
+
+```go
+pemBytes, err := client.DownloadDomainCertificate(context.Background(), "dom_123", "")
+if err != nil {
+  log.Fatal(err)
+}
+
+if err := os.WriteFile("example.com.pem", pemBytes, 0600); err != nil {
+  log.Fatal(err)
+}
+```
+
+## Team Context
+
+Most domain methods accept a `teamID` string or include `TeamID` in the input struct.
+
+```go
+domains, err := client.ListDomains(context.Background(), "team_123")
+connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainInput{
+  Domain: "team.example.com",
+  ProjectID: "proj_123",
+  TeamID: "team_123",
+})
+```
+
+Usage limits are still enforced against the owning user account, even when a team context is selected.
+
+## Limit Errors
+
+When a plan cannot add another custom domain, the SDK returns an `*pxxl.APIError` with the raw JSON body available:
+
+```go
+var apiErr *pxxl.APIError
+if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusForbidden {
+  fmt.Println(apiErr.Message)
+  fmt.Println(string(apiErr.Body))
+}
+```
