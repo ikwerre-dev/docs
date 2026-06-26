@@ -97,6 +97,14 @@
             ]
           },
           {
+            "group": "Cron Jobs",
+            "pages": [
+              "api/cron-cli",
+              "api/cron-node-sdk",
+              "api/cron-go-sdk"
+            ]
+          },
+          {
             "group": "CLI",
             "pages": [
               "api/pxxl-cli",
