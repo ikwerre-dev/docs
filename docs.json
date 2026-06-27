@@ -75,7 +75,12 @@
             "pages": [
               "api/overview",
               "api/authentication",
-              "api/deployments",
+              "api/deployments"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
               "api/python-sdk",
               "api/rust-sdk"
             ]
