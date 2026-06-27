@@ -68,7 +68,7 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "Integrations",
         "groups": [
           {
             "group": "API Reference",
@@ -109,6 +109,16 @@
             ]
           },
           {
+            "group": "Domains",
+            "pages": [
+              "api/domain-reseller-sdk",
+              "api/domain-node-sdk",
+              "api/domain-go-sdk",
+              "api/domain-python-sdk",
+              "api/domain-rust-sdk"
+            ]
+          },
+          {
             "group": "CLI",
             "pages": [
               "api/pxxl-cli",
@@ -120,16 +130,6 @@
               "api/pxxl-logs-open",
               "api/pxxlignore",
               "api/npm-publishing"
-            ]
-          },
-          {
-            "group": "Domains",
-            "pages": [
-              "api/domain-reseller-sdk",
-              "api/domain-node-sdk",
-              "api/domain-go-sdk",
-              "api/domain-python-sdk",
-              "api/domain-rust-sdk"
             ]
           }
         ]
