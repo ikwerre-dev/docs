@@ -1,0 +1,39 @@
+---
+title: "Pxxl CDN Rust SDK"
+sidebarTitle: "Rust SDK"
+description: "Use the Pxxl Rust SDK to upload, list, download, delete CDN assets, and read CDN summaries."
+---
+
+Install the official Rust SDK:
+
+```bash
+cargo add pxxl
+```
+
+```rust
+use pxxl::{PxxlClient, UploadAsset};
+
+let client = PxxlClient::new(std::env::var("PXXL_API_KEY")?)?;
+
+let asset = client.upload_asset(UploadAsset {
+    file_name: "hello.txt".into(),
+    bytes: b"hello from Pxxl".to_vec(),
+    visibility: Some("public".into()),
+    ..Default::default()
+}).await?;
+
+println!("{:?}", asset.public_url);
+```
+
+## Common Operations
+
+```rust
+let summary = client.summary().await?;
+let assets = client.list_assets(Some(&[("limit", "25")])).await?;
+let file_bytes = client.download_asset(&asset.id).await?;
+client.delete_asset(&asset.id).await?;
+```
+
+<Tip>
+Use `scope=cdn` and `permission=read_write` for upload services. Use `permission=read` for reporting jobs that only list or download assets.
+</Tip>

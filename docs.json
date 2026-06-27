@@ -79,13 +79,6 @@
             ]
           },
           {
-            "group": "SDKs",
-            "pages": [
-              "api/python-sdk",
-              "api/rust-sdk"
-            ]
-          },
-          {
             "group": "Database",
             "pages": [
               "api/database-api"
@@ -99,6 +92,8 @@
               "api/cdn-uploads",
               "api/cdn-node-sdk",
               "api/cdn-go-sdk",
+              "api/cdn-python-sdk",
+              "api/cdn-rust-sdk",
               "api/cdn-examples",
               "api/cdn-boilerplates"
             ]
@@ -108,7 +103,9 @@
             "pages": [
               "api/cron-cli",
               "api/cron-node-sdk",
-              "api/cron-go-sdk"
+              "api/cron-go-sdk",
+              "api/cron-python-sdk",
+              "api/cron-rust-sdk"
             ]
           },
           {
@@ -130,7 +127,9 @@
             "pages": [
               "api/domain-reseller-sdk",
               "api/domain-node-sdk",
-              "api/domain-go-sdk"
+              "api/domain-go-sdk",
+              "api/domain-python-sdk",
+              "api/domain-rust-sdk"
             ]
           }
         ]

@@ -1,0 +1,83 @@
+---
+title: "Domain Rust SDK"
+sidebarTitle: "Rust SDK"
+description: "Use the Pxxl Rust SDK to connect domains, verify DNS, manage records, check activation, and download proxy certificates."
+---
+
+Install the official Rust SDK:
+
+```bash
+cargo add pxxl
+```
+
+```rust
+use pxxl::{DomainDnsRecord, PxxlClient, VerifyDomainRecord};
+
+let client = PxxlClient::new(std::env::var("PXXL_API_KEY")?)?;
+```
+
+Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only keys can list and check domains. Write keys can connect domains and modify DNS records.
+
+## Connect a Domain
+
+```rust
+let connected = client.connect_domain("example.com", "proj_123", None).await?;
+```
+
+## Check and Verify
+
+```rust
+let check = client.check_domain("example.com", None).await?;
+let verify = client.verify_domain_record(VerifyDomainRecord {
+    domain: "example.com".into(),
+    project_id: "proj_123".into(),
+    team_id: None,
+}).await?;
+let activation = client.activate_domain("dom_123", None).await?;
+let zone = client.domain_zone_status("dom_123", None).await?;
+```
+
+## DNS Records
+
+```rust
+let records = client.list_domain_dns_records("dom_123", None).await?;
+
+let created = client.create_domain_dns_record("dom_123", DomainDnsRecord {
+    r#type: Some("A".into()),
+    name: Some("@".into()),
+    value: Some("193.181.212.65".into()),
+    ttl: Some(60),
+    ..Default::default()
+}, None).await?;
+
+client.update_domain_dns_records("dom_123", DomainDnsRecord {
+    record_id: Some("rec_123".into()),
+    r#type: Some("A".into()),
+    name: Some("@".into()),
+    value: Some("193.181.212.66".into()),
+    ..Default::default()
+}, None).await?;
+
+client.delete_domain_dns_record("dom_123", DomainDnsRecord {
+    record_id: Some("rec_123".into()),
+    ..Default::default()
+}, None).await?;
+```
+
+Pxxl blocks invalid `CNAME` and `A` record conflicts before saving.
+
+## Certificates
+
+```rust
+let pem = client.download_domain_certificate("dom_123", None).await?;
+tokio::fs::write("example.com.pem", pem).await?;
+```
+
+## Team Context
+
+```rust
+let team_client = PxxlClient::new(std::env::var("PXXL_API_KEY")?)?.with_team_id("team_123");
+let domains = team_client.list_domains(None).await?;
+```
+
+Usage limits are still enforced against the owning user account, even when a team context is selected.

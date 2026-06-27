@@ -1,0 +1,39 @@
+---
+title: "Pxxl CDN Python SDK"
+sidebarTitle: "Python SDK"
+description: "Use the Pxxl Python SDK to upload, list, download, delete CDN assets, and read CDN summaries."
+---
+
+Install the official Python SDK:
+
+```bash
+pip install pxxl
+```
+
+```python
+from pxxl import PxxlClient
+
+pxxl = PxxlClient(api_key="pxxl_...")
+
+asset = pxxl.upload_asset(
+    file_path="logo.png",
+    visibility="public",
+)
+
+print(asset["publicUrl"])
+```
+
+## Common Operations
+
+```python
+summary = pxxl.summary()
+assets = pxxl.list_assets(limit=25)
+file_bytes = pxxl.download_asset(asset["id"])
+pxxl.delete_asset(asset["id"])
+```
+
+<Tip>
+Use `scope=cdn` and `permission=read_write` for upload services. Use `permission=read` for reporting jobs that only list or download assets.
+</Tip>
+
+The SDK excludes provider details, bucket names, and internal object paths from public responses.

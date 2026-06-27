@@ -1,0 +1,74 @@
+---
+title: "Domain Python SDK"
+sidebarTitle: "Python SDK"
+description: "Use the Pxxl Python SDK to connect domains, verify DNS, manage records, check activation, and download proxy certificates."
+---
+
+Install the official Python SDK:
+
+```bash
+pip install pxxl
+```
+
+```python
+from pxxl import PxxlClient
+
+pxxl = PxxlClient(api_key="pxxl_...")
+```
+
+Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only keys can list and check domains. Write keys can connect domains and modify DNS records.
+
+## Connect a Domain
+
+```python
+connected = pxxl.connect_domain("example.com", project_id="proj_123")
+```
+
+## Check and Verify
+
+```python
+check = pxxl.check_domain("example.com")
+verify = pxxl.verify_domain_record("example.com", project_id="proj_123")
+activation = pxxl.activate_domain("dom_123")
+zone = pxxl.get_domain_zone_status("dom_123")
+```
+
+## DNS Records
+
+```python
+records = pxxl.list_domain_dns_records("dom_123")
+
+created = pxxl.create_domain_dns_record("dom_123", {
+    "type": "A",
+    "name": "@",
+    "value": "193.181.212.65",
+    "ttl": 60,
+})
+
+updated = pxxl.update_domain_dns_records("dom_123", {
+    "recordId": "rec_123",
+    "type": "A",
+    "name": "@",
+    "value": "193.181.212.66",
+})
+
+pxxl.delete_domain_dns_record("dom_123", {"recordId": "rec_123"})
+```
+
+Pxxl blocks invalid `CNAME` and `A` record conflicts before saving.
+
+## Certificates
+
+```python
+pem = pxxl.download_domain_certificate("dom_123")
+open("example.com.pem", "wb").write(pem)
+```
+
+## Team Context
+
+```python
+team_pxxl = PxxlClient(api_key="pxxl_...", team_id="team_123")
+domains = team_pxxl.list_domains()
+```
+
+Usage limits are still enforced against the owning user account, even when a team context is selected.
