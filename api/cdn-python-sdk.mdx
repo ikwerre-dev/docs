@@ -23,6 +23,27 @@ asset = pxxl.upload_asset(
 print(asset["publicUrl"])
 ```
 
+## Upload an Image
+
+Pass the image file path directly. Pxxl keeps image uploads as passive CDN assets, so the returned `publicUrl` can be used in pages, emails, avatars, product galleries, and social preview metadata.
+
+```python
+from pxxl import PxxlClient
+
+pxxl = PxxlClient(api_key="pxxl_...")
+
+image = pxxl.upload_asset(
+    file_path="./public/og-image.png",
+    visibility="public",
+)
+
+print(image["publicUrl"])
+```
+
+```html
+<img src="https://cdn.pxxl.app/..." alt="Product preview" />
+```
+
 ## Common Operations
 
 ```python

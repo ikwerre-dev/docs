@@ -25,6 +25,30 @@ let asset = client.upload_asset(UploadAsset {
 println!("{:?}", asset.public_url);
 ```
 
+## Upload an Image
+
+Read the image bytes and pass an image filename. Public image uploads return a URL you can use directly in frontend markup, Open Graph tags, avatars, and galleries.
+
+```rust
+use pxxl::{PxxlClient, UploadAsset};
+
+let client = PxxlClient::new(std::env::var("PXXL_API_KEY")?)?;
+let bytes = tokio::fs::read("./public/og-image.png").await?;
+
+let image = client.upload_asset(UploadAsset {
+    file_name: "og-image.png".into(),
+    bytes,
+    visibility: Some("public".into()),
+    ..Default::default()
+}).await?;
+
+println!("{:?}", image.public_url);
+```
+
+```html
+<img src="https://cdn.pxxl.app/..." alt="Product preview" />
+```
+
 ## Common Operations
 
 ```rust

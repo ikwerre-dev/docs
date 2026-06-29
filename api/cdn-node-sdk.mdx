@@ -24,6 +24,32 @@ const asset = await pxxl.uploadAsset({
 console.log(asset.publicUrl);
 ```
 
+## Upload an Image
+
+Use a `File`, `Blob`, or file buffer and keep the original image extension in `fileName`. Public image uploads return a `publicUrl` that you can use directly in an `<img>` tag, Open Graph image, avatar, or product gallery.
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { basename } from 'node:path';
+import { PxxlClient } from '@pxxlapp/pxxl';
+
+const pxxl = new PxxlClient({ apiKey: process.env.PXXL_API_KEY! });
+const imagePath = './public/og-image.png';
+const imageBytes = await readFile(imagePath);
+
+const image = await pxxl.uploadAsset({
+  file: new Blob([imageBytes], { type: 'image/png' }),
+  fileName: basename(imagePath),
+  visibility: 'public',
+});
+
+console.log(image.publicUrl);
+```
+
+```html
+<img src="https://cdn.pxxl.app/..." alt="Product preview" />
+```
+
 ## Common Operations
 
 ```ts
