@@ -58,6 +58,20 @@ let file_bytes = client.download_asset(&asset.id).await?;
 client.delete_asset(&asset.id).await?;
 ```
 
+## Return Values
+
+The Rust SDK uses typed structs where available and raw JSON where the API response is still broad:
+
+| Method | Returns |
+| --- | --- |
+| `summary()` | `CdnSummary`. |
+| `list_assets()` | Raw JSON object with `assets` and `pagination`. |
+| `upload_asset()` | `CdnAsset`. |
+| `download_asset()` | `Vec<u8>` containing the file body. |
+| `delete_asset()` | `()` when the delete succeeds. |
+
+`CdnAsset` currently exposes `id`, `file_name`, `size`, `public_url`, and `visibility`. Use `list_assets()` when you need the full raw asset object with metadata, hashes, project IDs, deployment IDs, timestamps, and pagination.
+
 <Tip>
 Use `scope=cdn` and `permission=read_write` for upload services. Use `permission=read` for reporting jobs that only list or download assets.
 </Tip>

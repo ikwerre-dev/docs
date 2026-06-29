@@ -53,12 +53,27 @@ console.log(image.publicUrl);
 ## Common Operations
 
 ```ts
-await pxxl.summary();
-await pxxl.listAssets({ limit: 25 });
-await pxxl.downloadAsset(asset.id);
+const summary = await pxxl.summary();
+const listed = await pxxl.listAssets({ limit: 25 });
+const file = await pxxl.downloadAsset(asset.id);
 await pxxl.deleteAsset(asset.id);
-await pxxl.usage({ limit: 100 });
+const events = await pxxl.usage(100);
 ```
+
+## Return Values
+
+The Node SDK unwraps the CDN API response envelopes so the common values are easier to use:
+
+| Method | Returns |
+| --- | --- |
+| `summary()` | CDN summary object from the API `data` field. |
+| `listAssets()` | `{ assets, pagination }`. |
+| `uploadAsset()` | Created asset object. |
+| `downloadAsset()` | `Blob` containing the file bytes. |
+| `deleteAsset()` | Resolves with no value when the delete succeeds. |
+| `usage(limit)` | Recent CDN usage `events`. |
+
+Asset objects include `id`, `userId`, optional `projectId`, optional `deploymentId`, `storageName`, `key`, `fileName`, `contentType`, `size`, `publicUrl`, `sha256`, `etag`, `visibility`, `kind`, `metadata`, `createdAt`, and `updatedAt`.
 
 <Tip>
 Use `scope=cdn` and `permission=read_write` for upload services. Use `permission=read` for reporting jobs that only list or download assets.

@@ -53,6 +53,20 @@ file_bytes = pxxl.download_asset(asset["id"])
 pxxl.delete_asset(asset["id"])
 ```
 
+## Return Values
+
+The Python SDK keeps CDN objects as dictionaries:
+
+| Method | Returns |
+| --- | --- |
+| `summary()` | CDN summary dictionary from the API `data` field. |
+| `list_assets()` | Raw list response with `assets` and `pagination`. |
+| `upload_asset()` | Created asset dictionary. |
+| `download_asset()` | `bytes` containing the file body. |
+| `delete_asset()` | `None` when the delete succeeds. |
+
+Asset dictionaries include `id`, `userId`, optional `projectId`, optional `deploymentId`, `storageName`, `key`, `fileName`, `contentType`, `size`, `publicUrl`, `sha256`, `etag`, `visibility`, `kind`, `metadata`, `createdAt`, and `updatedAt`.
+
 <Tip>
 Use `scope=cdn` and `permission=read_write` for upload services. Use `permission=read` for reporting jobs that only list or download assets.
 </Tip>
