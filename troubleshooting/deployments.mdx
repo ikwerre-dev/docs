@@ -27,11 +27,11 @@ Most deployment issues on Pxxl fall into one of three categories: an old build a
   </Accordion>
 
   <Accordion title="Changed project port causing 503">
-    The Pxxl edge proxy routes traffic to the port it registered for your container when the project was last deployed. If you change the port your app listens on — either in your code or in project settings — without redeploying and resyncing, the route points to a port that nothing is listening on, and every request returns 503.
+    The Pxxl edge proxy routes traffic through the runtime route registry to the active container port for your project. If you change the port your app listens on — either in your code or in project settings — make sure the project port matches the app listener and resync the proxy so the active upstream is refreshed.
 
     **Why port alignment matters**
 
-    Pxxl labels the container with the port defined in project settings and configures the upstream target accordingly. If your app process binds to a different port inside the container, TCP connections from the proxy are refused and the upstream is considered unhealthy. Updating the port in settings is necessary but not sufficient — you must also redeploy so the new label reaches the running container, and resync so the proxy picks up the new upstream address.
+    Pxxl registers the active container port in the runtime route map. If your app process binds to a different port inside the container, TCP connections from the proxy are refused and the upstream is considered unhealthy. Updating the port in settings is necessary, and a redeploy is only required when the running image itself needs the changed port/config value.
 
     **Fix steps**
 

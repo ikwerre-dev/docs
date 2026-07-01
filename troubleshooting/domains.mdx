@@ -52,11 +52,8 @@ Domains on Pxxl go through three layers before traffic reaches your app: DNS res
       <Step title="Correct the port if needed">
         Update the port to match your app's listener. The proxy can only route to the port Pxxl registered for the container; if the values differ, the route exists but traffic never reaches the app.
       </Step>
-      <Step title="Redeploy the project">
-        If the container image needs to pick up the new port value, trigger a new deployment.
-      </Step>
       <Step title="Resync the proxy">
-        Open **Dashboard > Domains**, select the domain, and click **Resync Proxy** so the edge picks up the updated upstream target.
+        Open **Dashboard > Domains**, select the domain, and click **Resync Proxy** so the edge picks up the updated upstream target. Redeploy only if the app image itself needs a changed port or config value.
       </Step>
     </Steps>
   </Accordion>
