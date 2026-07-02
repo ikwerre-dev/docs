@@ -24,6 +24,18 @@ Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only k
 let connected = client.connect_domain("example.com", "proj_123", None).await?;
 ```
 
+## Connect to a Microservice
+
+For monorepo or multi-service projects, use `connect_domain_to_service` with the microservice ID:
+
+```rust
+let connected = client
+    .connect_domain_to_service("api.example.com", "proj_123", "api", None)
+    .await?;
+```
+
+Pxxl keeps the domain attached to the parent project and routes traffic to the selected microservice target.
+
 ## Check and Verify
 
 ```rust

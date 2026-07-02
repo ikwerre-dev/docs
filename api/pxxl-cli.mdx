@@ -89,10 +89,13 @@ Use `scope=deploy` or `scope=all` for deploy/redeploy. Use `scope=project`, `sco
 pxxl domains list
 pxxl domains check example.com
 pxxl domains connect example.com --project <project-id>
+pxxl domains connect api.example.com --project <project-id> --service api
 pxxl domains stats example.com --timeframe 30d
 ```
 
 `pxxl domains check` combines local DNS checks with Pxxl-side ownership, SSL, and proxy route state. It is useful before connecting a custom domain or when debugging DNS propagation.
+
+For monorepos and multi-service projects, pass the microservice ID with `--service`, `--microservice`, or `--microservice-id`. The CLI connects the domain to that service target while keeping the main project ID as the owner.
 
 ## Teams
 

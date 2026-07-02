@@ -40,6 +40,7 @@ The command returns statuses such as `available`, `owned`, `taken`, or `blocked`
 pxxl domains connect
 pxxl domains connect example.com --project <project-id>
 pxxl domains connect app.example.com api.example.com --project <project-id>
+pxxl domains connect api.example.com --project <project-id> --service api
 ```
 
 Connect attaches the domain to the project and returns the expected DNS records needed for Pxxl routing:
@@ -50,6 +51,14 @@ CNAME www   example.com
 ```
 
 When you pass multiple domains, the CLI processes them one by one. Domains inside your plan allowance are connected, and domains above the allowance are shown as rejected with the plan limit and current usage.
+
+For monorepos and multi-service projects, add `--service <microservice-id>` to route the domain to a specific microservice:
+
+```bash
+pxxl domains connect api.example.com --project proj_123 --service api
+```
+
+The project ID stays the owner. The service value is stored as the routing target for that domain, so traffic goes to the selected microservice instead of the main container.
 
 After DNS propagates, verify the connection:
 

@@ -33,6 +33,25 @@ if err != nil {
 fmt.Println(connected["domainId"])
 ```
 
+## Connect to a Microservice
+
+For monorepo or multi-service projects, pass the microservice ID as `MicroserviceID`, `ServiceID`, or `ServiceAlias`:
+
+```go
+connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainInput{
+  Domain: "api.example.com",
+  ProjectID: "proj_123",
+  MicroserviceID: "api",
+})
+if err != nil {
+  log.Fatal(err)
+}
+
+fmt.Println(connected["serviceAlias"])
+```
+
+Pxxl keeps the domain attached to the parent project and routes traffic to the selected microservice target.
+
 ## Check and Verify
 
 ```go

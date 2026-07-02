@@ -24,6 +24,20 @@ Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only k
 connected = pxxl.connect_domain("example.com", project_id="proj_123")
 ```
 
+## Connect to a Microservice
+
+For monorepo or multi-service projects, pass the microservice ID with `microservice_id`, `service_id`, or `service_alias`:
+
+```python
+connected = pxxl.connect_domain(
+    "api.example.com",
+    project_id="proj_123",
+    microservice_id="api",
+)
+```
+
+Pxxl keeps the domain attached to the parent project and routes traffic to the selected microservice target.
+
 ## Check and Verify
 
 ```python

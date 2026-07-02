@@ -29,6 +29,20 @@ console.log(connected);
 
 The response includes the domain ID, status, management mode, expected `A` record target, route status, and whether a deployment refresh is pending.
 
+## Connect to a Microservice
+
+For monorepo or multi-service projects, pass the microservice ID as `microserviceId`, `serviceId`, or `serviceAlias`:
+
+```ts
+const connected = await pxxl.connectDomain({
+  domain: 'api.example.com',
+  projectId: 'proj_123',
+  microserviceId: 'api',
+});
+```
+
+Pxxl keeps the domain attached to the parent project and routes traffic to the selected microservice target.
+
 ## Bulk Connect
 
 `connectDomains` processes domains one by one. Valid domains are accepted and plan-limit failures are returned in `rejected`, so you can show partial success instead of losing the whole batch.
@@ -36,7 +50,7 @@ The response includes the domain ID, status, management mode, expected `A` recor
 ```ts
 const result = await pxxl.connectDomains([
   { domain: 'app.example.com', projectId: 'proj_123' },
-  { domain: 'api.example.com', projectId: 'proj_123' },
+  { domain: 'api.example.com', projectId: 'proj_123', serviceAlias: 'api' },
 ]);
 
 console.log(result.accepted);
