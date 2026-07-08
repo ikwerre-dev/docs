@@ -61,10 +61,35 @@ verify, err := client.VerifyDomainRecord(context.Background(), pxxl.VerifyDomain
   ProjectID: "proj_123",
 })
 activation, err := client.ActivateDomain(context.Background(), "dom_123", "")
-zone, err := client.GetDomainZoneStatus(context.Background(), "dom_123", "")
+status, err := client.GetDomainConnectionStatus(context.Background(), "dom_123", "")
 ```
 
 `CheckDomain` inspects Pxxl ownership, proxy state, SSL state, and availability. `VerifyDomainRecord` checks that the project DNS records are pointed correctly.
+
+Pxxl auto-detects pending external domains for up to 24 hours after connection, checking every 5 minutes until the expected `A` record resolves. Call `VerifyDomainRecord` when you want an immediate check after changing DNS.
+
+Use `GetDomainConnectionStatus` for a dashboard-style readiness check. It uses `.cv` managed zone status for `.cv` domains and the generic activation check for other TLDs. `GetDomainZoneStatus` remains available for older code and now follows the same dynamic behavior.
+
+## Resync the Proxy Route
+
+Use `ResyncDomainProxy` after changing the connected project, microservice target, SSL settings, force-HTTPS setting, or DNS state. It refreshes the route and certificate state without rebuilding the project.
+
+```go
+resync, err := client.ResyncDomainProxy(context.Background(), "example.com", "")
+if err != nil {
+  log.Fatal(err)
+}
+
+fmt.Println(resync)
+```
+
+For team-scoped domains, pass the team ID:
+
+```go
+resync, err := client.ResyncDomainProxy(context.Background(), "example.com", "team_123")
+```
+
+This method calls `POST /api/v3/cli/domains/:domain/resync`. It requires a domain-scoped API key with `read_write` permission.
 
 ## DNS Records
 
@@ -91,6 +116,30 @@ deleted, err := client.DeleteDomainDNSRecord(context.Background(), "dom_123", px
 ```
 
 For `.cv` and other Pxxl-managed domains, record changes are validated and logged for rollback in the dashboard.
+
+## Disconnect a Domain
+
+Use `DisconnectDomain` when a custom domain should stop routing to a project. This removes the project binding and proxy route, but it does not delete the domain from your registrar.
+
+```go
+deleted, err := client.DisconnectDomain(
+  context.Background(),
+  "example.com",
+  "proj_123",
+  "",
+)
+if err != nil {
+  log.Fatal(err)
+}
+
+fmt.Println(deleted)
+```
+
+| Argument | Required | Description |
+| --- | --- | --- |
+| `domain` | Yes | Hostname to disconnect, such as `example.com` or `api.example.com`. |
+| `projectID` | Recommended | Project currently connected to the domain. Include it to avoid removing the wrong binding. |
+| `teamID` | No | Spaceship context for team-owned domains. |
 
 ## Certificates
 

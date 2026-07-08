@@ -70,9 +70,25 @@ Check status and verify records:
 ```python
 check = client.check_domain("example.com")
 verify = client.verify_domain_record("example.com", project_id="proj_123")
-zone = client.get_domain_zone_status("dom_123")
 activation = client.activate_domain("dom_123")
+status = client.get_domain_connection_status("dom_123")
+resync = client.resync_domain_proxy("example.com")
 ```
+
+`get_domain_connection_status` dynamically uses `.cv` managed zone status for `.cv` domains and the generic activation check for every other TLD. Pending external domains are auto-detected for up to 24 hours after connection, with checks every 5 minutes.
+
+Use `resync_domain_proxy` after changing DNS, SSL settings, force-HTTPS, force-www, or the connected service target. It refreshes the proxy route and certificate state without rebuilding the project.
+
+Disconnect a domain from a project:
+
+```python
+deleted = client.disconnect_domain(
+    "example.com",
+    project_id="proj_123",
+)
+```
+
+Disconnecting removes the project binding and proxy route. It does not delete the domain from your registrar.
 
 When a plan limit is reached, the SDK raises `PxxlAPIError`. Use the status code and body to show the exact limit reason.
 

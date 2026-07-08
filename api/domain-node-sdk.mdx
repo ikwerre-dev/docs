@@ -29,6 +29,11 @@ console.log(connected);
 
 The response includes the domain ID, status, management mode, expected `A` record target, route status, and whether a deployment refresh is pending.
 
+After connection, Pxxl registers the proxy route immediately when the project has an active deployment. DNS activation has two paths:
+
+- `verifyDomainRecord` checks the expected `A` record right now and is the best choice after you update DNS.
+- Pxxl also auto-detects pending external domains for up to 24 hours after connection. The backend checks every 5 minutes and activates the domain once the expected record resolves.
+
 ## Connect to a Microservice
 
 For monorepo or multi-service projects, pass the microservice ID as `microserviceId`, `serviceId`, or `serviceAlias`:
@@ -68,10 +73,34 @@ await pxxl.verifyDomainRecord({
 });
 
 await pxxl.activateDomain('dom_123');
-await pxxl.getDomainZoneStatus('dom_123');
+await pxxl.getDomainConnectionStatus('dom_123');
 ```
 
-Use `verifyDomainRecord` after adding the expected DNS records. Use `activateDomain` to check zone activation, proxy routing, and SSL readiness.
+Use `verifyDomainRecord` after adding the expected DNS records. It works for normal external domains and Pxxl-managed domains.
+
+Use `activateDomain` or `getDomainConnectionStatus` to check activation, proxy routing, and SSL readiness. `getDomainConnectionStatus` follows the same dynamic flow as the dashboard: it uses `.cv` managed zone status for `.cv` domains, and the generic activation check for every other TLD.
+
+`getDomainZoneStatus` is still available for older code, but it now delegates to `getDomainConnectionStatus` so non-`.cv` domains do not fail with a `.cv`-only zone-status error.
+
+## Resync the Proxy Route
+
+Use `resyncDomainProxy` after changing the connected project, microservice target, SSL settings, force-HTTPS setting, or DNS state. It asks Pxxl to refresh the route and certificate state without rebuilding the project.
+
+```ts
+const resync = await pxxl.resyncDomainProxy('example.com');
+
+console.log(resync);
+```
+
+For team-scoped domains, pass `teamId`:
+
+```ts
+await pxxl.resyncDomainProxy('example.com', {
+  teamId: 'team_123',
+});
+```
+
+The method uses `POST /api/v3/cli/domains/:domain/resync`. It requires an API key with domain scope and `read_write` permission.
 
 ## DNS Records
 
@@ -100,6 +129,31 @@ await pxxl.deleteDomainDNSRecord('dom_123', {
 ```
 
 Pxxl blocks invalid `CNAME` and `A` record conflicts before saving.
+
+## Disconnect a Domain
+
+Use `disconnectDomain` when a custom domain should stop routing to a project. This removes the project binding and proxy route, but it does not delete the domain from your registrar.
+
+```ts
+await pxxl.disconnectDomain('example.com', {
+  projectId: 'proj_123',
+});
+```
+
+Pass `teamId` when disconnecting a domain inside a spaceship:
+
+```ts
+await pxxl.disconnectDomain('example.com', {
+  projectId: 'proj_123',
+  teamId: 'team_123',
+});
+```
+
+| Option | Required | Description |
+| --- | --- | --- |
+| `domain` | Yes | Hostname to disconnect, such as `example.com` or `api.example.com`. |
+| `projectId` | Recommended | Project currently connected to the domain. Include it to avoid removing the wrong binding. |
+| `teamId` | No | Spaceship context for team-owned domains. |
 
 ## Nameservers and Pxxl DNS
 

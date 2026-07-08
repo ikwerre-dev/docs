@@ -66,9 +66,24 @@ let connected = client
     .await?;
 
 let check = client.check_domain("example.com", None).await?;
-let zone = client.domain_zone_status("dom_123", None).await?;
 let activation = client.activate_domain("dom_123", None).await?;
+let status = client.domain_connection_status("dom_123", None).await?;
+let resync = client.resync_domain_proxy("example.com", None).await?;
 ```
+
+`domain_connection_status` dynamically uses `.cv` managed zone status for `.cv` domains and the generic activation check for every other TLD. Pending external domains are auto-detected for up to 24 hours after connection, with checks every 5 minutes.
+
+Use `resync_domain_proxy` after changing DNS, SSL settings, force-HTTPS, force-www, or the connected service target. It refreshes the proxy route and certificate state without rebuilding the project.
+
+Disconnect a domain from a project:
+
+```rust
+let deleted = client
+    .disconnect_domain("example.com", Some("proj_123"), None)
+    .await?;
+```
+
+Disconnecting removes the project binding and proxy route. It does not delete the domain from your registrar.
 
 For team-scoped work, pass `Some("team_123")` to methods or create the client with `.with_team_id("team_123")`.
 

@@ -46,8 +46,31 @@ let verify = client.verify_domain_record(VerifyDomainRecord {
     team_id: None,
 }).await?;
 let activation = client.activate_domain("dom_123", None).await?;
-let zone = client.domain_zone_status("dom_123", None).await?;
+let status = client.domain_connection_status("dom_123", None).await?;
 ```
+
+`verify_domain_record` performs an immediate expected-record check for the project domain. Pxxl also auto-detects pending external domains for up to 24 hours after connection, checking every 5 minutes until the expected DNS record resolves.
+
+Use `domain_connection_status` for a dashboard-style readiness check. It uses `.cv` managed zone status for `.cv` domains and the generic activation check for other TLDs. `domain_zone_status` remains available for older code and now follows the same dynamic behavior.
+
+## Resync the Proxy Route
+
+Use `resync_domain_proxy` after changing the connected project, microservice target, SSL settings, force-HTTPS setting, or DNS state. It refreshes the route and certificate state without rebuilding the project.
+
+```rust
+let resync = client.resync_domain_proxy("example.com", None).await?;
+println!("{resync:?}");
+```
+
+For team-scoped domains, pass the team ID:
+
+```rust
+let resync = client
+    .resync_domain_proxy("example.com", Some("team_123"))
+    .await?;
+```
+
+This method calls `POST /api/v3/cli/domains/:domain/resync`. It requires a domain-scoped API key with `read_write` permission.
 
 ## DNS Records
 
@@ -77,6 +100,32 @@ client.delete_domain_dns_record("dom_123", DomainDnsRecord {
 ```
 
 Pxxl blocks invalid `CNAME` and `A` record conflicts before saving.
+
+## Disconnect a Domain
+
+Use `disconnect_domain` when a custom domain should stop routing to a project. This removes the project binding and proxy route, but it does not delete the domain from your registrar.
+
+```rust
+let deleted = client
+    .disconnect_domain("example.com", Some("proj_123"), None)
+    .await?;
+
+println!("{deleted:?}");
+```
+
+For team-owned domains:
+
+```rust
+let deleted = client
+    .disconnect_domain("example.com", Some("proj_123"), Some("team_123"))
+    .await?;
+```
+
+| Argument | Required | Description |
+| --- | --- | --- |
+| `domain` | Yes | Hostname to disconnect, such as `example.com` or `api.example.com`. |
+| `project_id` | Recommended | Project currently connected to the domain. Include it to avoid removing the wrong binding. |
+| `team_id` | No | Spaceship context for team-owned domains. |
 
 ## Certificates
 

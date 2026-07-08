@@ -65,11 +65,45 @@ After DNS propagates, verify the connection:
 ```bash
 pxxl domains verify example.com --project <project-id>
 pxxl domains activate <domain-id>
+pxxl domains status <domain-id>
 ```
 
 <Tip>
-  For production domains, set DNS first, then keep checking with `pxxl domains check example.com` until the expected records resolve.
+  For production domains, set DNS first, then run `pxxl domains verify example.com --project <project-id>` for an immediate check.
 </Tip>
+
+Pxxl also auto-detects pending external domains for up to 24 hours after connection. The backend checks every 5 minutes and activates the domain once the expected `A` record resolves. Use `pxxl domains verify` when you want to force a fresh check immediately instead of waiting for the next automatic pass.
+
+## Resync Proxy
+
+```bash
+pxxl domains resync example.com
+pxxl domains resync example.com --team <team-id>
+```
+
+Use `resync` after changing DNS, SSL settings, force-HTTPS, force-www, or a project's domain target. It tells Pxxl to refresh the active proxy route and certificate state without requiring a rebuild.
+
+The command is useful when:
+
+| Situation | What resync does |
+| --- | --- |
+| DNS now points to Pxxl | Re-checks the route and queues certificate coverage. |
+| SSL shows the wrong certificate | Refreshes certificate state for the hostname. |
+| A domain was moved to another service | Pushes the route update to the proxy immediately. |
+| Proxy settings changed | Applies the latest HTTPS, WebSocket, rate-limit, and redirect configuration. |
+
+`pxxl domains resync` requires a domain-scoped API key with `read_write` permission.
+
+## Disconnect a Domain
+
+```bash
+pxxl domains disconnect example.com --project <project-id>
+pxxl domains disconnect example.com --project <project-id> --team <team-id>
+```
+
+Disconnect removes the project binding and proxy route for the domain. It does not delete the domain from your registrar or remove DNS records from an external DNS provider.
+
+Use `--project` when you know the connected project. This makes the operation precise and avoids removing the wrong binding for shared or team-owned domains.
 
 ## Managed DNS Records
 
@@ -90,11 +124,16 @@ Pxxl validates record conflicts before saving. For example, the same hostname ca
 pxxl domains nameservers verify <domain-id>
 pxxl domains nameservers set <domain-id> --values ns1.example.com,ns2.example.com
 pxxl domains nameservers reset <domain-id>
+pxxl domains status <domain-id>
 pxxl domains zone <domain-id>
 pxxl domains switch-to-pxxl-dns <domain-id>
 ```
 
-Use these commands when a domain is managed by Pxxl DNS or when you need to move a managed domain back to Pxxl nameservers.
+Use `pxxl domains status` for the generic domain readiness check. It checks activation, proxy routing, and SSL readiness. For `.cv` domains, it also uses the managed zone-status flow.
+
+`pxxl domains zone` is kept as an alias for older scripts. Zone-status data is only available for `.cv`/Pxxl-managed zones; normal external domains fall back to the generic activation check.
+
+Use the nameserver commands when a domain is managed by Pxxl DNS or when you need to move a managed domain back to Pxxl nameservers.
 
 ## Certificates
 
@@ -130,7 +169,7 @@ Domain commands require an API key with `scope=domain`, `scope=domains`, `scope=
 | Operation | Required permission |
 | --- | --- |
 | `list`, `check`, `stats` | `read` |
-| `connect`, `verify`, `activate`, DNS writes, nameserver writes | `read_write` |
+| `connect`, `verify`, `activate`, `resync`, `disconnect`, DNS writes, nameserver writes | `read_write` |
 
 ## Plan Limits
 

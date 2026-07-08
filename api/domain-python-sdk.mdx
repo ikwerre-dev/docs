@@ -44,8 +44,29 @@ Pxxl keeps the domain attached to the parent project and routes traffic to the s
 check = pxxl.check_domain("example.com")
 verify = pxxl.verify_domain_record("example.com", project_id="proj_123")
 activation = pxxl.activate_domain("dom_123")
-zone = pxxl.get_domain_zone_status("dom_123")
+status = pxxl.get_domain_connection_status("dom_123")
 ```
+
+`verify_domain_record` performs an immediate expected-record check for the project domain. Pxxl also auto-detects pending external domains for up to 24 hours after connection, checking every 5 minutes until the expected DNS record resolves.
+
+Use `get_domain_connection_status` for a dashboard-style readiness check. It uses `.cv` managed zone status for `.cv` domains and the generic activation check for other TLDs. `get_domain_zone_status` remains available for older code and now follows the same dynamic behavior.
+
+## Resync the Proxy Route
+
+Use `resync_domain_proxy` after changing the connected project, microservice target, SSL settings, force-HTTPS setting, or DNS state. It refreshes the route and certificate state without rebuilding the project.
+
+```python
+resync = pxxl.resync_domain_proxy("example.com")
+print(resync)
+```
+
+For team-scoped domains, pass `team_id`:
+
+```python
+resync = pxxl.resync_domain_proxy("example.com", team_id="team_123")
+```
+
+This method calls `POST /api/v3/cli/domains/:domain/resync`. It requires a domain-scoped API key with `read_write` permission.
 
 ## DNS Records
 
@@ -70,6 +91,34 @@ pxxl.delete_domain_dns_record("dom_123", {"recordId": "rec_123"})
 ```
 
 Pxxl blocks invalid `CNAME` and `A` record conflicts before saving.
+
+## Disconnect a Domain
+
+Use `disconnect_domain` when a custom domain should stop routing to a project. This removes the project binding and proxy route, but it does not delete the domain from your registrar.
+
+```python
+deleted = pxxl.disconnect_domain(
+    "example.com",
+    project_id="proj_123",
+)
+print(deleted)
+```
+
+For team-owned domains:
+
+```python
+deleted = pxxl.disconnect_domain(
+    "example.com",
+    project_id="proj_123",
+    team_id="team_123",
+)
+```
+
+| Argument | Required | Description |
+| --- | --- | --- |
+| `domain` | Yes | Hostname to disconnect, such as `example.com` or `api.example.com`. |
+| `project_id` | Recommended | Project currently connected to the domain. Include it to avoid removing the wrong binding. |
+| `team_id` | No | Spaceship context for team-owned domains. |
 
 ## Certificates
 
