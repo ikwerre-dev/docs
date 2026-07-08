@@ -1,10 +1,14 @@
 ---
 title: "Domain Go SDK"
 sidebarTitle: "Go SDK"
-description: "Use the Pxxl Go SDK to connect domains, verify records, manage DNS, check activation, and download proxy certificates."
+description: "Use the Pxxl Go SDK to connect domains, resync proxy routes, disconnect domains, manage DNS records, and download certificates."
 ---
 
-Install the Go SDK from the public Pxxl repository:
+The Go SDK is useful for backend services, CLIs, migration jobs, and internal tools that need to manage Pxxl domains programmatically.
+
+Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only keys can list and check domains. Write keys can connect domains, resync proxy routes, disconnect domains, and modify DNS records.
+
+## Install
 
 ```bash
 go get github.com/pxxlspace/pxxlspace/sdks/go/pxxl
@@ -17,9 +21,33 @@ if err != nil {
 }
 ```
 
-Use an API key with `scope=domain`, `scope=domains`, or `scope=all`. Read-only keys can list and check domains. Write keys can connect domains and modify DNS records.
+## Connect a domain
 
-## Connect a Domain
+Attach a hostname to a project. If the project already has an active deployment, Pxxl registers the proxy route immediately.
+
+<ParamField body="Domain" type="string" required>
+  Hostname to connect, such as `example.com` or `api.example.com`.
+</ParamField>
+
+<ParamField body="ProjectID" type="string" required>
+  Project that should receive traffic for the domain.
+</ParamField>
+
+<ParamField body="MicroserviceID" type="string">
+  Optional microservice target for monorepos and multi-service projects.
+</ParamField>
+
+<ParamField body="ServiceID" type="string">
+  Alias for `MicroserviceID`.
+</ParamField>
+
+<ParamField body="ServiceAlias" type="string">
+  Alias for `MicroserviceID`.
+</ParamField>
+
+<ParamField body="TeamID" type="string">
+  Spaceship context for team-owned projects and domains.
+</ParamField>
 
 ```go
 connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainInput{
@@ -31,17 +59,16 @@ if err != nil {
 }
 
 fmt.Println(connected["domainId"])
+fmt.Println(connected["expectedRecords"])
 ```
 
-## Connect to a Microservice
-
-For monorepo or multi-service projects, pass the microservice ID as `MicroserviceID`, `ServiceID`, or `ServiceAlias`:
+For a microservice route:
 
 ```go
 connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainInput{
   Domain: "api.example.com",
   ProjectID: "proj_123",
-  MicroserviceID: "api",
+  ServiceAlias: "api",
 })
 if err != nil {
   log.Fatal(err)
@@ -50,29 +77,58 @@ if err != nil {
 fmt.Println(connected["serviceAlias"])
 ```
 
-Pxxl keeps the domain attached to the parent project and routes traffic to the selected microservice target.
+<Tip>
+  Adding a domain does not require a redeploy when the project already has a healthy active deployment. Verify DNS after updating records, then resync if proxy or SSL settings changed.
+</Tip>
 
-## Check and Verify
+## Check and verify
+
+Use these methods to check availability, verify DNS, and inspect activation status.
+
+<ParamField body="domain" type="string" required>
+  Hostname to check or verify.
+</ParamField>
+
+<ParamField body="projectID" type="string" required>
+  Project that owns the domain binding.
+</ParamField>
+
+<ParamField body="domainID" type="string" required>
+  Pxxl domain ID returned by connect, list, or dashboard domain pages.
+</ParamField>
+
+<ParamField body="teamID" type="string">
+  Spaceship context for team-owned domains.
+</ParamField>
 
 ```go
 check, err := client.CheckDomain(context.Background(), "example.com", "")
+
 verify, err := client.VerifyDomainRecord(context.Background(), pxxl.VerifyDomainRecordInput{
   Domain: "example.com",
   ProjectID: "proj_123",
 })
+
 activation, err := client.ActivateDomain(context.Background(), "dom_123", "")
+
 status, err := client.GetDomainConnectionStatus(context.Background(), "dom_123", "")
 ```
 
 `CheckDomain` inspects Pxxl ownership, proxy state, SSL state, and availability. `VerifyDomainRecord` checks that the project DNS records are pointed correctly.
 
-Pxxl auto-detects pending external domains for up to 24 hours after connection, checking every 5 minutes until the expected `A` record resolves. Call `VerifyDomainRecord` when you want an immediate check after changing DNS.
+`GetDomainConnectionStatus` uses `.cv` managed zone status for `.cv` domains and the generic activation check for other TLDs. `GetDomainZoneStatus` remains available for older code and now follows the same dynamic behavior.
 
-Use `GetDomainConnectionStatus` for a dashboard-style readiness check. It uses `.cv` managed zone status for `.cv` domains and the generic activation check for other TLDs. `GetDomainZoneStatus` remains available for older code and now follows the same dynamic behavior.
+## Resync the proxy route
 
-## Resync the Proxy Route
+Use `ResyncDomainProxy` after changing DNS, SSL settings, force HTTPS, force www, the connected project, or the microservice target. It refreshes the active proxy route and certificate state without rebuilding the project.
 
-Use `ResyncDomainProxy` after changing the connected project, microservice target, SSL settings, force-HTTPS setting, or DNS state. It refreshes the route and certificate state without rebuilding the project.
+<ParamField body="domain" type="string" required>
+  Hostname whose proxy route should be refreshed.
+</ParamField>
+
+<ParamField body="teamID" type="string">
+  Spaceship context for team-owned domains.
+</ParamField>
 
 ```go
 resync, err := client.ResyncDomainProxy(context.Background(), "example.com", "")
@@ -83,15 +139,78 @@ if err != nil {
 fmt.Println(resync)
 ```
 
-For team-scoped domains, pass the team ID:
+For a team-owned domain:
 
 ```go
 resync, err := client.ResyncDomainProxy(context.Background(), "example.com", "team_123")
 ```
 
-This method calls `POST /api/v3/cli/domains/:domain/resync`. It requires a domain-scoped API key with `read_write` permission.
+This method calls `POST /api/v3/cli/domains/:domain/resync`. It requires `read_write` permission.
 
-## DNS Records
+## Disconnect a domain
+
+Use `DisconnectDomain` when a custom domain should stop routing to a project. It removes the project binding and proxy route. It does not delete the domain from your registrar.
+
+<ParamField body="domain" type="string" required>
+  Hostname to disconnect.
+</ParamField>
+
+<ParamField body="projectID" type="string">
+  Project currently connected to the domain. Include it when possible to avoid removing the wrong binding.
+</ParamField>
+
+<ParamField body="teamID" type="string">
+  Spaceship context for team-owned domains.
+</ParamField>
+
+```go
+deleted, err := client.DisconnectDomain(
+  context.Background(),
+  "example.com",
+  "proj_123",
+  "",
+)
+if err != nil {
+  log.Fatal(err)
+}
+
+fmt.Println(deleted)
+```
+
+For a team-owned domain:
+
+```go
+deleted, err := client.DisconnectDomain(
+  context.Background(),
+  "example.com",
+  "proj_123",
+  "team_123",
+)
+```
+
+## DNS records
+
+Pxxl-managed domains can be edited through the SDK. Pxxl validates record conflicts before saving, including invalid `CNAME` and `A` combinations for the same hostname.
+
+<ParamField body="domainID" type="string" required>
+  Pxxl domain ID for the managed zone.
+</ParamField>
+
+<ParamField body="Type" type="string" required>
+  DNS record type, such as `A`, `AAAA`, `CNAME`, `TXT`, or `MX`.
+</ParamField>
+
+<ParamField body="Name" type="string" required>
+  Record name. Use `@` for the apex/root.
+</ParamField>
+
+<ParamField body="Value" type="string" required>
+  DNS record value.
+</ParamField>
+
+<ParamField body="TTL" type="number">
+  Time to live in seconds.
+</ParamField>
 
 ```go
 records, err := client.ListDomainDNSRecords(context.Background(), "dom_123", "")
@@ -115,32 +234,6 @@ deleted, err := client.DeleteDomainDNSRecord(context.Background(), "dom_123", px
 })
 ```
 
-For `.cv` and other Pxxl-managed domains, record changes are validated and logged for rollback in the dashboard.
-
-## Disconnect a Domain
-
-Use `DisconnectDomain` when a custom domain should stop routing to a project. This removes the project binding and proxy route, but it does not delete the domain from your registrar.
-
-```go
-deleted, err := client.DisconnectDomain(
-  context.Background(),
-  "example.com",
-  "proj_123",
-  "",
-)
-if err != nil {
-  log.Fatal(err)
-}
-
-fmt.Println(deleted)
-```
-
-| Argument | Required | Description |
-| --- | --- | --- |
-| `domain` | Yes | Hostname to disconnect, such as `example.com` or `api.example.com`. |
-| `projectID` | Recommended | Project currently connected to the domain. Include it to avoid removing the wrong binding. |
-| `teamID` | No | Spaceship context for team-owned domains. |
-
 ## Certificates
 
 ```go
@@ -154,12 +247,13 @@ if err := os.WriteFile("example.com.pem", pemBytes, 0600); err != nil {
 }
 ```
 
-## Team Context
+## Team context
 
 Most domain methods accept a `teamID` string or include `TeamID` in the input struct.
 
 ```go
 domains, err := client.ListDomains(context.Background(), "team_123")
+
 connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainInput{
   Domain: "team.example.com",
   ProjectID: "proj_123",
@@ -169,9 +263,9 @@ connected, err := client.ConnectDomain(context.Background(), pxxl.ConnectDomainI
 
 Usage limits are still enforced against the owning user account, even when a team context is selected.
 
-## Limit Errors
+## Error handling
 
-When a plan cannot add another custom domain, the SDK returns an `*pxxl.APIError` with the raw JSON body available:
+When a plan cannot add another custom domain, the SDK returns an `*pxxl.APIError` with the raw JSON body available.
 
 ```go
 var apiErr *pxxl.APIError
