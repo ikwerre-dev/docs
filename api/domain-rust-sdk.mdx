@@ -187,6 +187,10 @@ Pxxl-managed domains can be edited through the SDK. Pxxl validates record confli
   Time to live in seconds.
 </ParamField>
 
+<ParamField body="priority" type="number">
+  Required for `MX` records. Lower values are preferred first by mail senders.
+</ParamField>
+
 ```rust
 let records = client.list_domain_dns_records("dom_123", None).await?;
 
@@ -194,6 +198,15 @@ let created = client.create_domain_dns_record("dom_123", DomainDnsRecord {
     r#type: Some("A".into()),
     name: Some("@".into()),
     value: Some("193.181.212.65".into()),
+    ttl: Some(60),
+    ..Default::default()
+}, None).await?;
+
+let mx_record = client.create_domain_dns_record("dom_123", DomainDnsRecord {
+    r#type: Some("MX".into()),
+    name: Some("@".into()),
+    value: Some("mail.example.com".into()),
+    priority: Some(10),
     ttl: Some(60),
     ..Default::default()
 }, None).await?;
@@ -211,6 +224,8 @@ client.delete_domain_dns_record("dom_123", DomainDnsRecord {
     ..Default::default()
 }, None).await?;
 ```
+
+`CNAME`, `MX`, and `NS` values must be hostnames such as `app.example.com`, `mail.example.com`, or `ns1.example.com`. Pxxl rejects URLs, IP addresses, spaces, `@`, and single-label values such as `mail`.
 
 ## Certificates
 

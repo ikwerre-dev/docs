@@ -112,11 +112,13 @@ For Pxxl-managed domains, the CLI can list and edit DNS records.
 ```bash
 pxxl domains records <domain-id>
 pxxl domains records add <domain-id> --type A --name @ --value 193.181.212.65 --ttl 60
+pxxl domains records add <domain-id> --type MX --name @ --value mail.example.com --priority 10 --ttl 60
 pxxl domains records update <domain-id> --record-id <record-id> --type A --name @ --value 193.181.212.66
 pxxl domains records delete <domain-id> --record-id <record-id>
 ```
 
 Pxxl validates record conflicts before saving. For example, the same hostname cannot be both a `CNAME` and an `A` record.
+For `MX` records, pass `--priority`; lower values are preferred first by mail senders. `CNAME`, `MX`, and `NS` values must be hostnames, not URLs, IP addresses, `@`, or single-label values.
 
 ## Nameservers and Zone Status
 

@@ -209,6 +209,10 @@ Pxxl-managed domains can be edited through the SDK. Pxxl validates record confli
   Time to live in seconds.
 </ParamField>
 
+<ParamField body="priority" type="number">
+  Required for `MX` records. Lower values are preferred first by mail senders.
+</ParamField>
+
 ```ts
 const records = await pxxl.listDomainDNSRecords('dom_123');
 
@@ -216,6 +220,14 @@ const created = await pxxl.createDomainDNSRecord('dom_123', {
   type: 'A',
   name: '@',
   value: '193.181.212.65',
+  ttl: 60,
+});
+
+const mxRecord = await pxxl.createDomainDNSRecord('dom_123', {
+  type: 'MX',
+  name: '@',
+  value: 'mail.example.com',
+  priority: 10,
   ttl: 60,
 });
 
@@ -230,6 +242,8 @@ await pxxl.deleteDomainDNSRecord('dom_123', {
   recordId: 'rec_123',
 });
 ```
+
+`CNAME`, `MX`, and `NS` values must be hostnames such as `app.example.com`, `mail.example.com`, or `ns1.example.com`. Pxxl rejects URLs, IP addresses, spaces, `@`, and single-label values such as `mail`.
 
 ## Nameservers and certificates
 
