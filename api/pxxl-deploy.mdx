@@ -28,6 +28,8 @@ startCommand = "npm run preview -- --host 0.0.0.0"
 
 Supported deploy metadata includes project name, domain/TLD choice, environment, deploy environment, port, language, framework, install command, build command, start command, base directory, and entry file.
 
+For GitHub-backed deployments, Gateway also supports server-side buildpack configuration in `pxxl.toml`, including `[build]`, `[packages]`, `[runtime]`, `[env]`, and `[services]`. See [pxxl.toml](/api/pxxl-toml) for the exact fields Gateway reads and validates.
+
 ## Authentication
 
 Use an API key with `scope=all` or `scope=deploy` and `permission=read_write`.
