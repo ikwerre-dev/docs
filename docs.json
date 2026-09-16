@@ -31,6 +31,7 @@
               "introduction",
               "quickstart",
               "deployment-reference",
+              "routing-and-rewrites",
               "framework-recipes"
             ]
           },
