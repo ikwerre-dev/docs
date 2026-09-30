@@ -75,7 +75,14 @@
             "pages": [
               "api/overview",
               "api/authentication",
-              "api/deployments"
+              "api/deployments",
+              "api/sdk-workflows"
+            ]
+          },
+          {
+            "group": "Storage",
+            "pages": [
+              "api/storage-s3-sdk"
             ]
           },
           {
