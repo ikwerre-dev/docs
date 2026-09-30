@@ -1,0 +1,105 @@
+---
+title: "SDK Workflows"
+sidebarTitle: "Production workflows"
+description: "Compose storage, domain checkout, invoices, payment links, cron jobs, and plan gates in a production backend."
+---
+
+Use the Pxxl SDK from a trusted backend or worker. The normal lifecycle is:
+
+1. Create or select a customer.
+2. Purchase the requested domains and create an invoice.
+3. Generate the hosted payment URL and send the browser there.
+4. Confirm payment from your backend before provisioning gated work.
+5. Manage DNS, proxy routing, and certificates through the domain resource.
+6. Run renewals, reconciliation, and reminders as idempotent cron jobs.
+
+## Domain checkout
+
+```ts
+import { Pxxl } from '@pxxlapp/pxxl';
+
+const pxxl = new Pxxl({
+  apiKey: process.env.PXXL_API_KEY!,
+  teamId: process.env.PXXL_TEAM_ID,
+});
+
+const customer = await pxxl.customers.create({
+  firstName: 'Ada',
+  lastName: 'Lovelace',
+  email: 'ada@example.com',
+  phone: '+2348000000000',
+  address1: '1 Example Street',
+  city: 'Lagos',
+  state: 'Lagos',
+  postalCode: '100001',
+  country: 'NG',
+});
+
+const { purchase, payment } = await pxxl.domains.checkout({
+  customerId: customer.id,
+  currency: 'NGN',
+  domains: [{ domainName: 'example.com', years: 1 }],
+});
+
+await savePendingCheckout({
+  invoiceId: purchase.invoiceId,
+  customerId: customer.id,
+});
+
+return Response.redirect(payment.paymentUrl, 303);
+```
+
+Treat the payment URL as a redirect destination, not proof of payment. Read the invoice again from your backend and require its paid state before enabling the purchased service.
+
+The same composed operation is available as `PurchaseDomainCheckout` in Go, `purchase_domain_checkout` in Python, and `purchase_domain_checkout` in Rust. Each returns both `purchase` and `payment`, while the lower-level purchase and payment methods remain available for custom workflows.
+
+## Domain management after payment
+
+```ts
+const domains = await pxxl.invoices.purchasedDomains();
+const connected = await pxxl.domains.connect({
+  domain: 'example.com',
+  projectId: 'proj_123',
+});
+
+await pxxl.domains.verify({
+  domain: 'example.com',
+  projectId: 'proj_123',
+});
+
+await pxxl.domains.resync('example.com');
+```
+
+DNS changes and proxy resyncs should be retryable. Persist the Pxxl invoice ID, domain ID, and project ID instead of relying on a browser session.
+
+## Cron jobs and plan gates
+
+```ts
+import { isPlanGateError } from '@pxxlapp/pxxl';
+
+try {
+  await pxxl.cronjobs.create({
+    name: 'invoice-reconciliation',
+    schedule: '*/10 * * * *',
+    url: 'https://api.example.com/jobs/reconcile-invoices',
+    method: 'POST',
+  });
+} catch (error) {
+  if (isPlanGateError(error)) {
+    return {
+      upgradeRequired: true,
+      code: error.code,
+      limit: error.limit,
+      current: error.current,
+      requiredPlan: error.requiredPlan,
+    };
+  }
+  throw error;
+}
+```
+
+Apply the same plan-gate handling to storage, domains, deployments, databases, and cron jobs. Do not guess limits in application code; use the structured values returned by Pxxl so dashboard copy and SDK integrations remain consistent when plans change.
+
+<Tip>
+  Use a stable idempotency key in your own database for payment callbacks and cron work. A retry should reconcile existing state, not purchase a domain or create an invoice twice.
+</Tip>

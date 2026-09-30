@@ -1,0 +1,80 @@
+---
+title: "Storage S3 SDK"
+sidebarTitle: "S3-compatible storage"
+description: "Create Pxxl buckets and use bucket-scoped S3 credentials without sending a Pxxl API key on object requests."
+---
+
+Pxxl Storage has two separate authentication planes:
+
+- Use a Pxxl API key to create buckets, issue or revoke access keys, and read analytics and billing.
+- Use the bucket's S3 `accessKeyId` and one-time `secretAccessKey` for object uploads, downloads, listing, copying, and deletion.
+
+Never send `PXXL_API_KEY` to the S3 endpoint. An S3 key is restricted to one bucket and has either `read` or `read_write` permission.
+
+## Node.js
+
+```bash
+npm install @pxxlapp/pxxl
+```
+
+```ts
+import { Pxxl } from '@pxxlapp/pxxl';
+
+const pxxl = new Pxxl({ apiKey: process.env.PXXL_API_KEY! });
+const { bucket } = await pxxl.storage.createBucket({
+  name: 'invoice-documents',
+  visibility: 'private',
+});
+
+// The Pxxl API key is used only for this management request.
+const s3 = await pxxl.storage.createS3Client(bucket.id, {
+  name: 'invoice-worker',
+  permission: 'read_write',
+});
+
+await s3.put('invoices/inv_123.pdf', pdfBytes, {
+  ContentType: 'application/pdf',
+});
+
+const downloadUrl = await s3.signedGetUrl('invoices/inv_123.pdf', 900);
+```
+
+Store the returned secret immediately. Pxxl only returns `secretAccessKey` when the key is created. Later list calls return the key ID, permission, status, and secret prefix, but not the secret.
+
+If credentials are already stored, create the data client directly. This path does not need a Pxxl API key:
+
+```ts
+import { PxxlS3 } from '@pxxlapp/pxxl';
+
+const s3 = new PxxlS3({
+  endpoint: process.env.PXXL_S3_ENDPOINT!,
+  region: process.env.PXXL_S3_REGION || 'auto',
+  bucket: process.env.PXXL_S3_BUCKET!,
+  accessKeyId: process.env.PXXL_S3_ACCESS_KEY_ID!,
+  secretAccessKey: process.env.PXXL_S3_SECRET_ACCESS_KEY!,
+  pathStyle: true,
+});
+```
+
+## Go, Python, and Rust
+
+The Go, Python, and Rust Pxxl SDKs expose `CreateStorageAccessKey`, `create_storage_access_key`, and `create_storage_access_key`. Pass the returned fields to the standard AWS S3 client for that language:
+
+| Returned field | AWS S3 client setting |
+| --- | --- |
+| `endpoint` | Custom endpoint URL |
+| `region` | Region, normally `auto` |
+| `bucket` | Bucket name |
+| `accessKeyId` | Access key ID |
+| `secretAccessKey` | Secret access key |
+| `pathStyle` | Force path-style addressing |
+
+This works with AWS SDK for Go v2, `boto3`, and `aws-sdk-s3`. Keep the Pxxl management key and bucket-scoped S3 keys in different secret variables so a workload receives only the minimum access it needs.
+
+## Rotation
+
+Create a replacement key, deploy it to the workload, verify one object operation, then revoke the old key. Do not delete the old key before the new deployment is healthy.
+
+<Warning>
+  A `read_write` S3 key can replace or delete objects in its bucket. Use `read` for reporting, invoice delivery, and other download-only jobs.
+</Warning>
